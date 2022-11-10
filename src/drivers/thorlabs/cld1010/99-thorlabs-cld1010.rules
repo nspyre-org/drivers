@@ -1,0 +1,2 @@
+# Thorlabs CLD1010-LP
+SUBSYSTEM=="usb", ACTION=="add", ATTRS{idVendor}=="1313", ATTRS{idProduct}=="804f", GROUP="usbtmc", MODE="0660"

@@ -1,0 +1,12 @@
+[Unit]
+Description=Remote control GPIO Flask server
+After=network.target
+
+[Service]
+Type=idle
+Restart=always
+User=debian
+ExecStart=/usr/bin/python3 /home/debian/beaglebone_server/gpio_flask_server.py
+
+[Install]
+WantedBy=multi-user.target

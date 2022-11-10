@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "nspyre-drivers"
+version = "0.1.2"
+description = "A set of Python drivers for lab instrumentation."
+authors = [
+	"Jacob Feder <jacobsfeder@gmail.com>",
+	"Ben Soloway",
+	"Will Burke",
+	"Kimberly Carrillo Rivera"
+]
+maintainers = [
+	"Jacob Feder <jacobsfeder@gmail.com>"
+]
+readme = "README.md"
+packages = [{include = "src/drivers"}]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+pyvisa = "*"
+pyvisa-py = "*"
+pyserial = "*"
+pyusb = "*"
+# extras
+requests = { version = "*", optional = true }
+dlipower = { version = "*", optional = true }
+seabreeze = { version = "*", optional = true }
+ximea-py = { version = "*", optional = true }
+zaber-motion = { version = "*", optional = true }
+numpy = { version = "*", optional = true }
+
+[tool.poetry.extras]
+beaglebone = ["requests"]
+dli_pdu = ["dlipower", "beautifulsoup4"]
+oceanoptics = ["seabreeze"]
+ximea = ["ximea-py", "numpy"]
+zaber = ["zaber-motion"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

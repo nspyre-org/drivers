@@ -1,0 +1,456 @@
+[[package]]
+name = "beautifulsoup4"
+version = "4.11.1"
+description = "Screen-scraping library"
+category = "main"
+optional = true
+python-versions = ">=3.6.0"
+
+[package.dependencies]
+soupsieve = ">1.2"
+
+[package.extras]
+html5lib = ["html5lib"]
+lxml = ["lxml"]
+
+[[package]]
+name = "certifi"
+version = "2022.9.24"
+description = "Python package for providing Mozilla's CA Bundle."
+category = "main"
+optional = true
+python-versions = ">=3.6"
+
+[[package]]
+name = "charset-normalizer"
+version = "2.1.1"
+description = "The Real First Universal Charset Detector. Open, modern and actively maintained alternative to Chardet."
+category = "main"
+optional = true
+python-versions = ">=3.6.0"
+
+[package.extras]
+unicode-backport = ["unicodedata2"]
+
+[[package]]
+name = "dlipower"
+version = "1.0.176"
+description = "Control digital loggers web power switch"
+category = "main"
+optional = true
+python-versions = "*"
+
+[package.dependencies]
+beautifulsoup4 = "*"
+requests = "*"
+six = "*"
+
+[[package]]
+name = "idna"
+version = "3.4"
+description = "Internationalized Domain Names in Applications (IDNA)"
+category = "main"
+optional = true
+python-versions = ">=3.5"
+
+[[package]]
+name = "importlib-metadata"
+version = "5.0.0"
+description = "Read metadata from Python packages"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+typing-extensions = {version = ">=3.6.4", markers = "python_version < \"3.8\""}
+zipp = ">=0.5"
+
+[package.extras]
+docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)"]
+perf = ["ipython"]
+testing = ["flake8 (<5)", "flufl.flake8", "importlib-resources (>=1.3)", "packaging", "pyfakefs", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)", "pytest-perf (>=0.9.2)"]
+
+[[package]]
+name = "numpy"
+version = "1.21.1"
+description = "NumPy is the fundamental package for array computing with Python."
+category = "main"
+optional = true
+python-versions = ">=3.7"
+
+[[package]]
+name = "protobuf"
+version = "4.21.5"
+description = ""
+category = "main"
+optional = true
+python-versions = ">=3.7"
+
+[[package]]
+name = "pyserial"
+version = "3.5"
+description = "Python Serial Port Extension"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+cp2110 = ["hidapi"]
+
+[[package]]
+name = "pyusb"
+version = "1.2.1"
+description = "Python USB access module"
+category = "main"
+optional = false
+python-versions = ">=3.6.0"
+
+[[package]]
+name = "pyvisa"
+version = "1.12.0"
+description = "Python VISA bindings for GPIB, RS232, TCPIP and USB instruments"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
+typing-extensions = "*"
+
+[[package]]
+name = "pyvisa-py"
+version = "0.5.3"
+description = "Pure Python implementation of a VISA library."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
+pyvisa = ">=1.12.0"
+typing-extensions = "*"
+
+[package.extras]
+gpib-ctypes = ["gpib-ctypes (>=0.3.0)"]
+serial = ["pyserial (>=3.0)"]
+usb = ["pyusb"]
+
+[[package]]
+name = "requests"
+version = "2.28.1"
+description = "Python HTTP for Humans."
+category = "main"
+optional = true
+python-versions = ">=3.7, <4"
+
+[package.dependencies]
+certifi = ">=2017.4.17"
+charset-normalizer = ">=2,<3"
+idna = ">=2.5,<4"
+urllib3 = ">=1.21.1,<1.27"
+
+[package.extras]
+socks = ["PySocks (>=1.5.6,!=1.5.7)"]
+use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
+
+[[package]]
+name = "rx"
+version = "3.2.0"
+description = "Reactive Extensions (Rx) for Python"
+category = "main"
+optional = true
+python-versions = ">=3.6.0"
+
+[[package]]
+name = "seabreeze"
+version = "2.0.3"
+description = "Python interface module for Ocean Optics spectrometers. This software is not associated with Ocean Optics. Use it at your own risk."
+category = "main"
+optional = true
+python-versions = ">=3.7"
+
+[package.dependencies]
+numpy = ">=1.21"
+typing-extensions = {version = "*", markers = "python_version < \"3.8\""}
+
+[package.extras]
+pyseabreeze = ["pyusb (>=1.0)"]
+tests = ["pytest", "pytest (>=6.2.4)"]
+
+[[package]]
+name = "six"
+version = "1.16.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
+optional = true
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[[package]]
+name = "soupsieve"
+version = "2.3.2.post1"
+description = "A modern CSS selector implementation for Beautiful Soup."
+category = "main"
+optional = true
+python-versions = ">=3.6"
+
+[[package]]
+name = "typing-extensions"
+version = "4.4.0"
+description = "Backported and Experimental Type Hints for Python 3.7+"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[[package]]
+name = "urllib3"
+version = "1.26.12"
+description = "HTTP library with thread-safe connection pooling, file post, and more."
+category = "main"
+optional = true
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4"
+
+[package.extras]
+brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)", "brotlipy (>=0.6.0)"]
+secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "pyOpenSSL (>=0.14)", "urllib3-secure-extra"]
+socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
+
+[[package]]
+name = "ximea-py"
+version = "4.27.2.2"
+description = "XIMEA camera API"
+category = "main"
+optional = true
+python-versions = ">=3.7,<4.0"
+
+[[package]]
+name = "zaber-motion"
+version = "2.15.0"
+description = "A library for communicating with Zaber devices"
+category = "main"
+optional = true
+python-versions = ">=3.7"
+
+[package.dependencies]
+protobuf = "4.21.5"
+rx = ">=3.0.0"
+zaber-motion-bindings-darwin = {version = "2.15.0", markers = "platform_system == \"Darwin\""}
+zaber-motion-bindings-linux = {version = "2.15.0", markers = "platform_system == \"Linux\""}
+zaber-motion-bindings-windows = {version = "2.15.0", markers = "platform_system == \"Windows\""}
+
+[package.extras]
+dev = ["pycodestyle", "pylint", "pytest", "setuptools", "twine (==1.15.0)", "wheel"]
+
+[[package]]
+name = "zaber-motion-bindings-darwin"
+version = "2.15.0"
+description = "Mac OS bindings for Zaber Motion Library"
+category = "main"
+optional = true
+python-versions = "*"
+
+[package.extras]
+build = ["invoke"]
+
+[[package]]
+name = "zaber-motion-bindings-linux"
+version = "2.15.0"
+description = "Linux bindings for Zaber Motion Library"
+category = "main"
+optional = true
+python-versions = "*"
+
+[package.extras]
+build = ["invoke"]
+
+[[package]]
+name = "zaber-motion-bindings-windows"
+version = "2.15.0"
+description = "Windows bindings for Zaber Motion Library"
+category = "main"
+optional = true
+python-versions = "*"
+
+[package.extras]
+build = ["invoke"]
+
+[[package]]
+name = "zipp"
+version = "3.10.0"
+description = "Backport of pathlib-compatible object wrapper for zip files"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.extras]
+docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)"]
+testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
+
+[extras]
+beaglebone = ["requests"]
+dli-pdu = ["dlipower"]
+oceanoptics = ["seabreeze"]
+ximea = ["ximea-py", "numpy"]
+zaber = ["zaber-motion"]
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.7"
+content-hash = "f8b334b8c1b17998ee2788a89a85ae76f0eac6353b76a850b32cd871ef85867e"
+
+[metadata.files]
+beautifulsoup4 = [
+    {file = "beautifulsoup4-4.11.1-py3-none-any.whl", hash = "sha256:58d5c3d29f5a36ffeb94f02f0d786cd53014cf9b3b3951d42e0080d8a9498d30"},
+    {file = "beautifulsoup4-4.11.1.tar.gz", hash = "sha256:ad9aa55b65ef2808eb405f46cf74df7fcb7044d5cbc26487f96eb2ef2e436693"},
+]
+certifi = [
+    {file = "certifi-2022.9.24-py3-none-any.whl", hash = "sha256:90c1a32f1d68f940488354e36370f6cca89f0f106db09518524c88d6ed83f382"},
+    {file = "certifi-2022.9.24.tar.gz", hash = "sha256:0d9c601124e5a6ba9712dbc60d9c53c21e34f5f641fe83002317394311bdce14"},
+]
+charset-normalizer = [
+    {file = "charset-normalizer-2.1.1.tar.gz", hash = "sha256:5a3d016c7c547f69d6f81fb0db9449ce888b418b5b9952cc5e6e66843e9dd845"},
+    {file = "charset_normalizer-2.1.1-py3-none-any.whl", hash = "sha256:83e9a75d1911279afd89352c68b45348559d1fc0506b054b346651b5e7fee29f"},
+]
+dlipower = [
+    {file = "dlipower-1.0.176.tar.gz", hash = "sha256:5fb0f857bdc5a062cce179aacd2635e6ad3109957e799b4e50db0d10995be704"},
+]
+idna = [
+    {file = "idna-3.4-py3-none-any.whl", hash = "sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2"},
+    {file = "idna-3.4.tar.gz", hash = "sha256:814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4"},
+]
+importlib-metadata = [
+    {file = "importlib_metadata-5.0.0-py3-none-any.whl", hash = "sha256:ddb0e35065e8938f867ed4928d0ae5bf2a53b7773871bfe6bcc7e4fcdc7dea43"},
+    {file = "importlib_metadata-5.0.0.tar.gz", hash = "sha256:da31db32b304314d044d3c12c79bd59e307889b287ad12ff387b3500835fc2ab"},
+]
+numpy = [
+    {file = "numpy-1.21.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:38e8648f9449a549a7dfe8d8755a5979b45b3538520d1e735637ef28e8c2dc50"},
+    {file = "numpy-1.21.1-cp37-cp37m-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:fd7d7409fa643a91d0a05c7554dd68aa9c9bb16e186f6ccfe40d6e003156e33a"},
+    {file = "numpy-1.21.1-cp37-cp37m-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:a75b4498b1e93d8b700282dc8e655b8bd559c0904b3910b144646dbbbc03e062"},
+    {file = "numpy-1.21.1-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1412aa0aec3e00bc23fbb8664d76552b4efde98fb71f60737c83efbac24112f1"},
+    {file = "numpy-1.21.1-cp37-cp37m-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:e46ceaff65609b5399163de5893d8f2a82d3c77d5e56d976c8b5fb01faa6b671"},
+    {file = "numpy-1.21.1-cp37-cp37m-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:c6a2324085dd52f96498419ba95b5777e40b6bcbc20088fddb9e8cbb58885e8e"},
+    {file = "numpy-1.21.1-cp37-cp37m-win32.whl", hash = "sha256:73101b2a1fef16602696d133db402a7e7586654682244344b8329cdcbbb82172"},
+    {file = "numpy-1.21.1-cp37-cp37m-win_amd64.whl", hash = "sha256:7a708a79c9a9d26904d1cca8d383bf869edf6f8e7650d85dbc77b041e8c5a0f8"},
+    {file = "numpy-1.21.1-cp38-cp38-macosx_10_9_universal2.whl", hash = "sha256:95b995d0c413f5d0428b3f880e8fe1660ff9396dcd1f9eedbc311f37b5652e16"},
+    {file = "numpy-1.21.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:635e6bd31c9fb3d475c8f44a089569070d10a9ef18ed13738b03049280281267"},
+    {file = "numpy-1.21.1-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:4a3d5fb89bfe21be2ef47c0614b9c9c707b7362386c9a3ff1feae63e0267ccb6"},
+    {file = "numpy-1.21.1-cp38-cp38-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:8a326af80e86d0e9ce92bcc1e65c8ff88297de4fa14ee936cb2293d414c9ec63"},
+    {file = "numpy-1.21.1-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:791492091744b0fe390a6ce85cc1bf5149968ac7d5f0477288f78c89b385d9af"},
+    {file = "numpy-1.21.1-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0318c465786c1f63ac05d7c4dbcecd4d2d7e13f0959b01b534ea1e92202235c5"},
+    {file = "numpy-1.21.1-cp38-cp38-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:9a513bd9c1551894ee3d31369f9b07460ef223694098cf27d399513415855b68"},
+    {file = "numpy-1.21.1-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.whl", hash = "sha256:91c6f5fc58df1e0a3cc0c3a717bb3308ff850abdaa6d2d802573ee2b11f674a8"},
+    {file = "numpy-1.21.1-cp38-cp38-win32.whl", hash = "sha256:978010b68e17150db8765355d1ccdd450f9fc916824e8c4e35ee620590e234cd"},
+    {file = "numpy-1.21.1-cp38-cp38-win_amd64.whl", hash = "sha256:9749a40a5b22333467f02fe11edc98f022133ee1bfa8ab99bda5e5437b831214"},
+    {file = "numpy-1.21.1-cp39-cp39-macosx_10_9_universal2.whl", hash = "sha256:d7a4aeac3b94af92a9373d6e77b37691b86411f9745190d2c351f410ab3a791f"},
+    {file = "numpy-1.21.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:d9e7912a56108aba9b31df688a4c4f5cb0d9d3787386b87d504762b6754fbb1b"},
+    {file = "numpy-1.21.1-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:25b40b98ebdd272bc3020935427a4530b7d60dfbe1ab9381a39147834e985eac"},
+    {file = "numpy-1.21.1-cp39-cp39-manylinux_2_12_i686.manylinux2010_i686.whl", hash = "sha256:8a92c5aea763d14ba9d6475803fc7904bda7decc2a0a68153f587ad82941fec1"},
+    {file = "numpy-1.21.1-cp39-cp39-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:05a0f648eb28bae4bcb204e6fd14603de2908de982e761a2fc78efe0f19e96e1"},
+    {file = "numpy-1.21.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f01f28075a92eede918b965e86e8f0ba7b7797a95aa8d35e1cc8821f5fc3ad6a"},
+    {file = "numpy-1.21.1-cp39-cp39-win32.whl", hash = "sha256:88c0b89ad1cc24a5efbb99ff9ab5db0f9a86e9cc50240177a571fbe9c2860ac2"},
+    {file = "numpy-1.21.1-cp39-cp39-win_amd64.whl", hash = "sha256:01721eefe70544d548425a07c80be8377096a54118070b8a62476866d5208e33"},
+    {file = "numpy-1.21.1-pp37-pypy37_pp73-manylinux_2_12_x86_64.manylinux2010_x86_64.whl", hash = "sha256:2d4d1de6e6fb3d28781c73fbde702ac97f03d79e4ffd6598b880b2d95d62ead4"},
+    {file = "numpy-1.21.1.zip", hash = "sha256:dff4af63638afcc57a3dfb9e4b26d434a7a602d225b42d746ea7fe2edf1342fd"},
+]
+protobuf = [
+    {file = "protobuf-4.21.5-cp310-abi3-win32.whl", hash = "sha256:5310cbe761e87f0c1decce019d23f2101521d4dfff46034f8a12a53546036ec7"},
+    {file = "protobuf-4.21.5-cp310-abi3-win_amd64.whl", hash = "sha256:e5c5a2886ae48d22a9d32fbb9b6636a089af3cd26b706750258ce1ca96cc0116"},
+    {file = "protobuf-4.21.5-cp37-abi3-macosx_10_9_universal2.whl", hash = "sha256:ee04f5823ed98bb9a8c3b1dc503c49515e0172650875c3f76e225b223793a1f2"},
+    {file = "protobuf-4.21.5-cp37-abi3-manylinux2014_aarch64.whl", hash = "sha256:b04484d6f42f48c57dd2737a72692f4c6987529cdd148fb5b8e5f616862a2e37"},
+    {file = "protobuf-4.21.5-cp37-abi3-manylinux2014_x86_64.whl", hash = "sha256:5e0b272217aad8971763960238c1a1e6a65d50ef7824e23300da97569a251c55"},
+    {file = "protobuf-4.21.5-cp37-cp37m-win32.whl", hash = "sha256:5eb0724615e90075f1d763983e708e1cef08e66b1891d8b8b6c33bc3b2f1a02b"},
+    {file = "protobuf-4.21.5-cp37-cp37m-win_amd64.whl", hash = "sha256:011c0f267e85f5d73750b6c25f0155d5db1e9443cd3590ab669a6221dd8fcdb0"},
+    {file = "protobuf-4.21.5-cp38-cp38-win32.whl", hash = "sha256:7b6f22463e2d1053d03058b7b4ceca6e4ed4c14f8c286c32824df751137bf8e7"},
+    {file = "protobuf-4.21.5-cp38-cp38-win_amd64.whl", hash = "sha256:b52e7a522911a40445a5f588bd5b5e584291bfc5545e09b7060685e4b2ff814f"},
+    {file = "protobuf-4.21.5-cp39-cp39-win32.whl", hash = "sha256:a7faa62b183d6a928e3daffd06af843b4287d16ef6e40f331575ecd236a7974d"},
+    {file = "protobuf-4.21.5-cp39-cp39-win_amd64.whl", hash = "sha256:5e0ce02418ef03d7657a420ae8fd6fec4995ac713a3cb09164e95f694dbcf085"},
+    {file = "protobuf-4.21.5-py2.py3-none-any.whl", hash = "sha256:bf711b451212dc5b0fa45ae7dada07d8e71a4b0ff0bc8e4783ee145f47ac4f82"},
+    {file = "protobuf-4.21.5-py3-none-any.whl", hash = "sha256:3ec6f5b37935406bb9df9b277e79f8ed81d697146e07ef2ba8a5a272fb24b2c9"},
+    {file = "protobuf-4.21.5.tar.gz", hash = "sha256:eb1106e87e095628e96884a877a51cdb90087106ee693925ec0a300468a9be3a"},
+]
+pyserial = [
+    {file = "pyserial-3.5-py2.py3-none-any.whl", hash = "sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0"},
+    {file = "pyserial-3.5.tar.gz", hash = "sha256:3c77e014170dfffbd816e6ffc205e9842efb10be9f58ec16d3e8675b4925cddb"},
+]
+pyusb = [
+    {file = "pyusb-1.2.1-py3-none-any.whl", hash = "sha256:2b4c7cb86dbadf044dfb9d3a4ff69fd217013dbe78a792177a3feb172449ea36"},
+    {file = "pyusb-1.2.1.tar.gz", hash = "sha256:a4cc7404a203144754164b8b40994e2849fde1cfff06b08492f12fff9d9de7b9"},
+]
+pyvisa = [
+    {file = "PyVISA-1.12.0-py3-none-any.whl", hash = "sha256:4cbe2f37f75dd233638154f377af7522b8c1dc8324cce3dc3e9563a9b7b84add"},
+    {file = "PyVISA-1.12.0.tar.gz", hash = "sha256:73a38e6bf7431449bd3e1c7bf51a995f62fcae68df580c01c30628629c6b5cbf"},
+]
+pyvisa-py = [
+    {file = "PyVISA-py-0.5.3.tar.gz", hash = "sha256:4c80954ce454582169ecfd7117b3df8c3b668bd62073aa6798e92d3d1395f58a"},
+    {file = "PyVISA_py-0.5.3-py3-none-any.whl", hash = "sha256:9f876de5945560421424c62b7880f328b59530fac6fbcbe604ae71646632b331"},
+]
+requests = [
+    {file = "requests-2.28.1-py3-none-any.whl", hash = "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"},
+    {file = "requests-2.28.1.tar.gz", hash = "sha256:7c5599b102feddaa661c826c56ab4fee28bfd17f5abca1ebbe3e7f19d7c97983"},
+]
+rx = [
+    {file = "Rx-3.2.0-py3-none-any.whl", hash = "sha256:922c5f4edb3aa1beaa47bf61d65d5380011ff6adcd527f26377d05cb73ed8ec8"},
+    {file = "Rx-3.2.0.tar.gz", hash = "sha256:b657ca2b45aa485da2f7dcfd09fac2e554f7ac51ff3c2f8f2ff962ecd963d91c"},
+]
+seabreeze = [
+    {file = "seabreeze-2.0.3-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:6e2278f66bc91e3220d131e4c84820fd8fa5ed4b38c5148a6eec8d1e7c6efa85"},
+    {file = "seabreeze-2.0.3-cp310-cp310-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:89e5139e2a8ef2ea667661615c65023df5fe8408f2438269ff7e224cee9e0245"},
+    {file = "seabreeze-2.0.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:37a226b8aea0b0e20e660d85e918dd61a2fa32a371cdfb3d91c967ff897fbc6b"},
+    {file = "seabreeze-2.0.3-cp310-cp310-win32.whl", hash = "sha256:b6b09b4f8ad3f28ff574118b5930fc0f71f177f7adff02d662a84745a9dd19c2"},
+    {file = "seabreeze-2.0.3-cp310-cp310-win_amd64.whl", hash = "sha256:923838fbdfea2ef55d04098bdd171e40632a84c5f8042366f5d030e2d13ddc7b"},
+    {file = "seabreeze-2.0.3-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:bc1579bb02a5c1667cd5ebce96b719fa2fa3a2ba15d02de6d7b27e16e6e36f42"},
+    {file = "seabreeze-2.0.3-cp37-cp37m-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:18774fffa08d747ae69ccd2fbb37b6bcffc05e9e1cfb0c6d5a134e60ebe77dde"},
+    {file = "seabreeze-2.0.3-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c64f056f4a49f8413f421703747f51cf6fc0b6ca447d4de80ce9e9150f26edcc"},
+    {file = "seabreeze-2.0.3-cp37-cp37m-win32.whl", hash = "sha256:470da0efda48ef7cb4ff38b2d33b82352a98779274a685b2ea6461ccbd5b3edc"},
+    {file = "seabreeze-2.0.3-cp37-cp37m-win_amd64.whl", hash = "sha256:016c5eabaf8f1dfdeb9c558512fab82e562f350d53f9ca304aa05f199bc489ee"},
+    {file = "seabreeze-2.0.3-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:d8d4cde05769e41850aeffbee80762e066be9128666031a80ae3f2c0e57c29da"},
+    {file = "seabreeze-2.0.3-cp38-cp38-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:032b704bcef39c47026daa920ba6d9b22cfd3c4c7bed8af0e9eda464e67f00d8"},
+    {file = "seabreeze-2.0.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:dd58081a94c90da027e6937472b57e0c1ac472d579fbdd17a4ec4c83f9fbc03d"},
+    {file = "seabreeze-2.0.3-cp38-cp38-win32.whl", hash = "sha256:612c18f61b1a1866410afee3d316ea9e28165e2cf472f6b71be68c8b82923a44"},
+    {file = "seabreeze-2.0.3-cp38-cp38-win_amd64.whl", hash = "sha256:d1a97736aa579a603452cd5301c9f1a27ab2487002f613c43fb289a2de035b02"},
+    {file = "seabreeze-2.0.3-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:1aeefaf215e894a817f1a1551de3974c4798f6b8b81f457a09c55fd4b177eff3"},
+    {file = "seabreeze-2.0.3-cp39-cp39-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:3e801433fa4d59dd3303e5a6c246e060908acd96c7d8fef21de03023b5847643"},
+    {file = "seabreeze-2.0.3-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:adfe5ba2d1df4d8afbf8c7d97524b13e50b62b7973206075c71854c0ec926845"},
+    {file = "seabreeze-2.0.3-cp39-cp39-win32.whl", hash = "sha256:7531177e3be5b8aaec8061f2e0946a94ce2f23fce5d54286cdbadbe400bfb832"},
+    {file = "seabreeze-2.0.3-cp39-cp39-win_amd64.whl", hash = "sha256:24985a173de2a290eea770fcd60fa9ba02cb677c3631605c3f14049603423919"},
+    {file = "seabreeze-2.0.3.tar.gz", hash = "sha256:be32d2411686e4e766ddbf41decfae940f13740b86b34966e9bf72fc82d3799f"},
+]
+six = [
+    {file = "six-1.16.0-py2.py3-none-any.whl", hash = "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"},
+    {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
+]
+soupsieve = [
+    {file = "soupsieve-2.3.2.post1-py3-none-any.whl", hash = "sha256:3b2503d3c7084a42b1ebd08116e5f81aadfaea95863628c80a3b774a11b7c759"},
+    {file = "soupsieve-2.3.2.post1.tar.gz", hash = "sha256:fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d"},
+]
+typing-extensions = [
+    {file = "typing_extensions-4.4.0-py3-none-any.whl", hash = "sha256:16fa4864408f655d35ec496218b85f79b3437c829e93320c7c9215ccfd92489e"},
+    {file = "typing_extensions-4.4.0.tar.gz", hash = "sha256:1511434bb92bf8dd198c12b1cc812e800d4181cfcb867674e0f8279cc93087aa"},
+]
+urllib3 = [
+    {file = "urllib3-1.26.12-py2.py3-none-any.whl", hash = "sha256:b930dd878d5a8afb066a637fbb35144fe7901e3b209d1cd4f524bd0e9deee997"},
+    {file = "urllib3-1.26.12.tar.gz", hash = "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e"},
+]
+ximea-py = [
+    {file = "ximea_py-4.27.2.2-py3-none-any.whl", hash = "sha256:d356c5002e74fbf0e7673aad2fa25cd14dca88c171106fd6df20c53c3caa8b76"},
+    {file = "ximea_py-4.27.2.2.tar.gz", hash = "sha256:d594b5c4fd5c7e180098055331dddbb7f04ca10573e1e290913678e2b9f35fa6"},
+]
+zaber-motion = [
+    {file = "zaber_motion-2.15.0-py2.py3-none-any.whl", hash = "sha256:8ed93386149ab28c9ee4735513cf3e481953ca957c249bbea1afe54c59b2aa57"},
+    {file = "zaber_motion-2.15.0.tar.gz", hash = "sha256:cd7abddef485af61291eaefbec09adc109b5284353a7859c7a22874e6157b3be"},
+]
+zaber-motion-bindings-darwin = [
+    {file = "zaber_motion_bindings_darwin-2.15.0-py3-none-any.whl", hash = "sha256:0fc05da0941eab53584f9a89f54c9b753c75fb9acbadaaa58f29decc6fec3e82"},
+    {file = "zaber_motion_bindings_darwin-2.15.0.tar.gz", hash = "sha256:7577af8694f6feca12833d3fa87e3fb1ef141bac62485ab935fd18ebbac4ad1f"},
+]
+zaber-motion-bindings-linux = [
+    {file = "zaber_motion_bindings_linux-2.15.0-py3-none-any.whl", hash = "sha256:de00e30b97485c7957062cbc3e141ed078beecf8b9db6f25103a0889aa01d429"},
+    {file = "zaber_motion_bindings_linux-2.15.0.tar.gz", hash = "sha256:9444f9396cb0f1d499a597127f966c8b63401ab34a6f20d1dedd7629f666fb4d"},
+]
+zaber-motion-bindings-windows = [
+    {file = "zaber_motion_bindings_windows-2.15.0-py3-none-any.whl", hash = "sha256:e36332814f6f9a643fb09fee455cba44715cac86900647b682fab8a836bef3c5"},
+    {file = "zaber_motion_bindings_windows-2.15.0.tar.gz", hash = "sha256:5886852027cb69e2c4bbd424b02e1dd083624656009c12bc1e4fbb7e330185e7"},
+]
+zipp = [
+    {file = "zipp-3.10.0-py3-none-any.whl", hash = "sha256:4fcb6f278987a6605757302a6e40e896257570d11c51628968ccb2a47e80c6c1"},
+    {file = "zipp-3.10.0.tar.gz", hash = "sha256:7a7262fd930bd3e36c50b9a64897aec3fafff3dfdeec9623ae22b40e93f99bb8"},
+]
