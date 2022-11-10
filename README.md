@@ -31,11 +31,23 @@ zaber
 For some USB drivers on Linux, you need to grant user access to the drivers in 
 order for VISA to detect them:
 You should find the udev rules file in the same folder as the driver, then, e.g.:
-$ sudo cp src/drivers/thorlabs/cld1010/99-thorlabs-cld1010.rules /etc/udev/rules.d/
+
+```bash
+sudo cp src/drivers/thorlabs/cld1010/99-thorlabs-cld1010.rules /etc/udev/rules.d/
+````
+
 Create a user group for the usb device access:
-$ sudo groupadd usbtmc
+
+```bash
+sudo groupadd usbtmc
+```
+
 Add any relevant users to the group:
-$ usermod -aG usbtmc <myuser>
+
+```bash
+usermod -aG usbtmc <myuser>
+```
+
 Reboot for the changes to take effect.
 
 ## Other Drivers
