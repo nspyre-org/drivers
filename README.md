@@ -55,7 +55,7 @@ Reboot for the changes to take effect.
 In order to minimize reinventing the wheel, below is a list of other sources of 
 python instrument drivers. Please contribute if you find other useful sources!
 
-[Cobolt](https://github.com/cobolt-lasers/pycobolt)
+[pycobolt](https://github.com/cobolt-lasers/pycobolt)
 
 ## Contributing
 
