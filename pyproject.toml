@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nspyre-drivers"
-version = "0.1.2"
+version = "0.1.3"
 description = "A set of Python drivers for lab instrumentation."
 authors = [
 	"Jacob Feder <jacobsfeder@gmail.com>",
