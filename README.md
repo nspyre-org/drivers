@@ -60,7 +60,7 @@ python instrument drivers. Please contribute if you find other useful sources!
 ## Contributing
 
 If you want to contribute driver code, please submit it as a 
-[pull request](http://TODO). This project uses 
+[pull request](https://nspyre.readthedocs.io/en/latest/contributing.html#forking-pull-requests). This project uses 
 [poetry](https://python-poetry.org/). If your driver requires specific 
 dependencies beyond those currently in use in the project, you should include 
 them in the pyproject.toml file as extras. See the poetry documentation for 
