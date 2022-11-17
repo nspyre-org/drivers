@@ -50,6 +50,19 @@ usermod -aG usbtmc <myuser>
 
 Reboot for the changes to take effect.
 
+## Usage
+
+After installation, you can use drivers with, e.g.:
+
+```python
+from drivers.rohde_schwarz.hmp4040.hmp4040 import HMP4040
+with HMP4040('TCPIP::192.168.0.10::5025::SOCKET') as power_supply:
+	# set the power supply channel 1 to 5V
+	power_supply.set_voltage(1, 5.0)
+```
+
+See the source for all of the available drivers and the import paths.
+
 ## Other Drivers
 
 In order to minimize reinventing the wheel, below is a list of other sources of 
