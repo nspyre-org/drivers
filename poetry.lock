@@ -216,7 +216,7 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
 name = "ximea-py"
-version = "4.27.2.2"
+version = "4.27.2.3"
 description = "XIMEA camera API"
 category = "main"
 optional = true
@@ -224,7 +224,7 @@ python-versions = ">=3.7,<4.0"
 
 [[package]]
 name = "zaber-motion"
-version = "2.15.0"
+version = "2.15.1"
 description = "A library for communicating with Zaber devices"
 category = "main"
 optional = true
@@ -233,16 +233,16 @@ python-versions = ">=3.7"
 [package.dependencies]
 protobuf = "4.21.5"
 rx = ">=3.0.0"
-zaber-motion-bindings-darwin = {version = "2.15.0", markers = "platform_system == \"Darwin\""}
-zaber-motion-bindings-linux = {version = "2.15.0", markers = "platform_system == \"Linux\""}
-zaber-motion-bindings-windows = {version = "2.15.0", markers = "platform_system == \"Windows\""}
+zaber-motion-bindings-darwin = {version = "2.15.1", markers = "platform_system == \"Darwin\""}
+zaber-motion-bindings-linux = {version = "2.15.1", markers = "platform_system == \"Linux\""}
+zaber-motion-bindings-windows = {version = "2.15.1", markers = "platform_system == \"Windows\""}
 
 [package.extras]
 dev = ["pycodestyle", "pylint", "pytest", "setuptools", "twine (==1.15.0)", "wheel"]
 
 [[package]]
 name = "zaber-motion-bindings-darwin"
-version = "2.15.0"
+version = "2.15.1"
 description = "Mac OS bindings for Zaber Motion Library"
 category = "main"
 optional = true
@@ -253,7 +253,7 @@ build = ["invoke"]
 
 [[package]]
 name = "zaber-motion-bindings-linux"
-version = "2.15.0"
+version = "2.15.1"
 description = "Linux bindings for Zaber Motion Library"
 category = "main"
 optional = true
@@ -264,7 +264,7 @@ build = ["invoke"]
 
 [[package]]
 name = "zaber-motion-bindings-windows"
-version = "2.15.0"
+version = "2.15.1"
 description = "Windows bindings for Zaber Motion Library"
 category = "main"
 optional = true
@@ -431,24 +431,24 @@ urllib3 = [
     {file = "urllib3-1.26.12.tar.gz", hash = "sha256:3fa96cf423e6987997fc326ae8df396db2a8b7c667747d47ddd8ecba91f4a74e"},
 ]
 ximea-py = [
-    {file = "ximea_py-4.27.2.2-py3-none-any.whl", hash = "sha256:d356c5002e74fbf0e7673aad2fa25cd14dca88c171106fd6df20c53c3caa8b76"},
-    {file = "ximea_py-4.27.2.2.tar.gz", hash = "sha256:d594b5c4fd5c7e180098055331dddbb7f04ca10573e1e290913678e2b9f35fa6"},
+    {file = "ximea-py-4.27.2.3.tar.gz", hash = "sha256:f46eea4a42f32620019c55e151cc99e25f6d7551c393b7fd1d9eb534c1bf023e"},
+    {file = "ximea_py-4.27.2.3-py3-none-any.whl", hash = "sha256:fc8e3108d8c5ff00c34960eede614483ca03e3a48001eb85da54751d2ce96c09"},
 ]
 zaber-motion = [
-    {file = "zaber_motion-2.15.0-py2.py3-none-any.whl", hash = "sha256:8ed93386149ab28c9ee4735513cf3e481953ca957c249bbea1afe54c59b2aa57"},
-    {file = "zaber_motion-2.15.0.tar.gz", hash = "sha256:cd7abddef485af61291eaefbec09adc109b5284353a7859c7a22874e6157b3be"},
+    {file = "zaber_motion-2.15.1-py2.py3-none-any.whl", hash = "sha256:29c00e32f346b15affd3bb268eefbe793dc4109c090361297dc3886cebf8c85a"},
+    {file = "zaber_motion-2.15.1.tar.gz", hash = "sha256:9d888962628b089fe6f2ffc0376e90df58bb2a90686e16c870b0ded0e2166f3b"},
 ]
 zaber-motion-bindings-darwin = [
-    {file = "zaber_motion_bindings_darwin-2.15.0-py3-none-any.whl", hash = "sha256:0fc05da0941eab53584f9a89f54c9b753c75fb9acbadaaa58f29decc6fec3e82"},
-    {file = "zaber_motion_bindings_darwin-2.15.0.tar.gz", hash = "sha256:7577af8694f6feca12833d3fa87e3fb1ef141bac62485ab935fd18ebbac4ad1f"},
+    {file = "zaber_motion_bindings_darwin-2.15.1-py3-none-any.whl", hash = "sha256:86e20985af5deaed8163c3231f68dd4b3ae7d7c457f64b375ab9913858f3e91f"},
+    {file = "zaber_motion_bindings_darwin-2.15.1.tar.gz", hash = "sha256:38bd68e66a7db5a30db56197e3f8d6f66a9a4567a56b7c31eda0e785e5a9cf98"},
 ]
 zaber-motion-bindings-linux = [
-    {file = "zaber_motion_bindings_linux-2.15.0-py3-none-any.whl", hash = "sha256:de00e30b97485c7957062cbc3e141ed078beecf8b9db6f25103a0889aa01d429"},
-    {file = "zaber_motion_bindings_linux-2.15.0.tar.gz", hash = "sha256:9444f9396cb0f1d499a597127f966c8b63401ab34a6f20d1dedd7629f666fb4d"},
+    {file = "zaber_motion_bindings_linux-2.15.1-py3-none-any.whl", hash = "sha256:fb0a08430324386f8053bd6caead6ee260a2a03f9f5cc49634d5ecd37d342831"},
+    {file = "zaber_motion_bindings_linux-2.15.1.tar.gz", hash = "sha256:401b51de2496d2cb6adbef116cfe36d515fbd037d944aca55d357836c8e196ca"},
 ]
 zaber-motion-bindings-windows = [
-    {file = "zaber_motion_bindings_windows-2.15.0-py3-none-any.whl", hash = "sha256:e36332814f6f9a643fb09fee455cba44715cac86900647b682fab8a836bef3c5"},
-    {file = "zaber_motion_bindings_windows-2.15.0.tar.gz", hash = "sha256:5886852027cb69e2c4bbd424b02e1dd083624656009c12bc1e4fbb7e330185e7"},
+    {file = "zaber_motion_bindings_windows-2.15.1-py3-none-any.whl", hash = "sha256:501c98116df38824af443ae6871873197fc4f79b46f1fa3a4b9b303dcc517716"},
+    {file = "zaber_motion_bindings_windows-2.15.1.tar.gz", hash = "sha256:97cea3e82292deca250255b54a732a92d0cb54d7c68494f0cf89d4b9ff65114c"},
 ]
 zipp = [
     {file = "zipp-3.10.0-py3-none-any.whl", hash = "sha256:4fcb6f278987a6605757302a6e40e896257570d11c51628968ccb2a47e80c6c1"},
