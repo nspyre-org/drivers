@@ -20,19 +20,20 @@ pyvisa = "*"
 pyvisa-py = "*"
 pyserial = "*"
 pyusb = "*"
+numpy = "*"
 # extras
 requests = { version = "*", optional = true }
+beautifulsoup4 = { version = "*", optional = true }
 dlipower = { version = "*", optional = true }
 seabreeze = { version = "*", optional = true }
 ximea-py = { version = "*", optional = true }
 zaber-motion = { version = "*", optional = true }
-numpy = { version = "*", optional = true }
 
 [tool.poetry.extras]
 beaglebone = ["requests"]
 dli_pdu = ["dlipower", "beautifulsoup4"]
 oceanoptics = ["seabreeze"]
-ximea = ["ximea-py", "numpy"]
+ximea = ["ximea-py"]
 zaber = ["zaber-motion"]
 
 [build-system]
