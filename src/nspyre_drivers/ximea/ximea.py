@@ -20,7 +20,7 @@ class XIMEA:
         self.disconnect()
 
     def connect(self):
-        if serial_number is not None:
+        if self.serial_number is not None:
             self.driver = ximea.xiapi.open_device_by_SN(serial_number)
         else:
             # create instance for first connected camera
