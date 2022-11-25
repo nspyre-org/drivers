@@ -12,14 +12,14 @@ import time
 logger = logging.getLogger(__name__)
 
 class LOX_02:
-    def __init__(self, com_port: str):
+    def __init__(self, serial_port: str):
         """Args:
-            com_port: serial COM port (see pyserial docs)
+            serial_port: serial COM port (see pyserial docs)
         """
-        self.com_port = com_port
+        self.serial_port = serial_port
 
     def open(self):
-        self.serial_port = serial.Serial(self.com_port)
+        self.serial_port = serial.Serial(self.serial_port)
         self.mode_poll()
         self.serial_port.reset_input_buffer()
 

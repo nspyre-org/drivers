@@ -23,7 +23,7 @@ class ZaberStages:
             axis_mapping: dictionary mapping an axis peripheral id (int) to the axis name (str)
         """
         self.axis_mapping = axis_mapping
-        self.com_port = com_port
+        self.serial_port = serial_port
 
     def __getitem__(self, key):
         """Return the zaber axis object associated with the given key."""
@@ -46,8 +46,8 @@ class ZaberStages:
         self.close()
 
     def open(self):
-        if self.com_port:
-            self.conn = Connection.open_serial_port(com_port)
+        if self.serial_port is not None:
+            self.conn = Connection.open_serial_port(self.serial_port)
             logger.debug(f'Found {len(device_list)} devices')
         else:
             # detect any connected Zaber serial devices
@@ -68,8 +68,8 @@ class ZaberStages:
             for i in range(1, device.axis_count + 1):
                 axis = device.get_axis(i)
                 logger.debug(f'Found Zaber axis [{axis}] with peripheral id [{axis.peripheral_id}]')
-                if axis.peripheral_id in axis_mapping:
-                    axis_key = axis_mapping[axis.peripheral_id]
+                if axis.peripheral_id in self.axis_mapping:
+                    axis_key = self.axis_mapping[axis.peripheral_id]
                     logger.debug(f'Associated zaber axis [{axis_key}] with peripheral id [{axis.peripheral_id}]')
                     self.axes[axis_key] = axis
 

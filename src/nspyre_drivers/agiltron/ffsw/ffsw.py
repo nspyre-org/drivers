@@ -10,16 +10,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 class FFSW():
-    def __init__(self, com_port: str):
-        self.com_port = com_port
+    def __init__(self, serial_port: str):
+        self.serial_port = serial_port
 
     def _read(self):
-        response = self.serial_port.read(4)
+        response = self.conn.read(4)
         logger.debug(f'response [{response}]')
         return response
 
     def _write(self, msg):
-        self.serial_port.write(msg)
+        self.conn.write(msg)
         logger.debug(f'sent command [{msg}]')
 
     def get_sn(self):
@@ -59,25 +59,25 @@ class FFSW():
         return self._read()
 
     def open(self):
-        self.serial_port = serial.Serial(port=self.com_port, baudrate=9600, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS)
+        self.conn = serial.Serial(port=self.serial_port, baudrate=9600, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE, bytesize=serial.EIGHTBITS)
 
     def close(self):
-        self.serial_port.close()
+        self.conn.close()
 
     def __enter__(self):
         self.open()
-        self.serial_port.flush()
+        self.conn.flush()
         return self
 
     def __exit__(self, *args):
-        self.serial_port.flush()
+        self.conn.flush()
         self.close()
 
 
 if __name__ == '__main__':
     with FFSW('/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_AU03N2AV-if00-port0') as switch:
         print('flushing buffer')
-        print(switch.serial_port.flush())
+        print(switch.conn.flush())
         print('setting port 1')
         print(switch.set_port(1))
         print('getting port after setting port 1')

@@ -32,15 +32,19 @@ class ArduinoGPIO(QObject):
         # args: dac channel, dac voltage
         dac_voltage_changed = QtCore.Signal(str, float)
 
-    def __init__(self, com_port: str, pins=None, baud=115200,
-                    write_timeout:float = 3.0, timeout: float = 3.0):
+    def __init__(self, serial_port: str, pins=None, baud=115200, 
+                    timeout: float = 3.0):
         """Args:
-            com_port: serial COM port (see pyserial docs)
+            serial_port: serial COM port (see pyserial docs)
             npins: number of digital pins
             baud: baudrate
             timeout: read timeout (s)
         """
         super().__init__()
+
+        self.serial_port = serial_port
+        self.baud = baud
+        self.timeout = timeout
 
         # available pins
         if pins is not None:
@@ -58,15 +62,15 @@ class ArduinoGPIO(QObject):
         }
 
     def open(self):
-        self.serial_port = serial.Serial(com_port, baudrate=baud, timeout=timeout)
-        logger.info(f'connected to Arduino @ [{com_port}]')
+        self.conn = serial.Serial(self.serial_port, baudrate=self.baud, timeout=self.timeout)
+        logger.info(f'connected to Arduino @ [{self.serial_port}]')
         # this is required due to a funky issue with the arduino uno
         # (it restarts the arduino when opening the serial port, so we have to wait for it to boot)
         # https://stackoverflow.com/questions/1618141/pyserial-problem-with-arduino-works-with-the-python-shell-but-not-in-a-program/4941880#4941880
         time.sleep(2)
 
     def close(self):
-        self.serial_port.close()
+        self.conn.close()
 
     def __enter__(self):
         self.open()
@@ -88,21 +92,21 @@ class ArduinoGPIO(QObject):
             The device response as a string
         """
         msg = cmd.encode('ascii') + bytes([arg1, arg2, arg3])
-        logger.debug(f'writing packet 0x{msg.hex()} to Arduino [{self.serial_port}]')
-        self.serial_port.write(msg)
+        logger.debug(f'writing packet 0x{msg.hex()} to Arduino [{self.conn}]')
+        self.conn.write(msg)
         # response the Arduino sends when it's ready for the next command
         ok_resp = b'rdy\n'
         # response from the Arduino
         resp = b''
         while ok_resp not in resp:
-            resp += self.serial_port.read(1)
+            resp += self.conn.read(1)
             logger.debug(f'Arduino responded with [{resp.decode("ascii", "ignore").encode("unicode_escape")} (ascii)] [{resp.hex()}(hex)]')
             if resp == b'':
                 raise RuntimeError('Error in communication with Arduino program. No Response.')
         if b'error' in resp:
             if tries < 5:
                 # shift one byte so that hopefully it reads correctly next time
-                self.serial_port.write(bytes([0]))
+                self.conn.write(bytes([0]))
                 self._send_cmd(cmd, arg1, arg2, arg3, tries=tries + 1)
             else:
                 # if it's failed too many times, give up
@@ -124,10 +128,10 @@ class ArduinoGPIO(QObject):
             raise ValueError(f'Pin is invalid. Available pins:\n{self.pins}')
         if state:
             self._send_cmd('o', pin, 1)
-            logger.debug(f'Set Arduino@{self.serial_port} pin [{pin}] HIGH')
+            logger.debug(f'Set Arduino@{self.conn} pin [{pin}] HIGH')
         else:
             self._send_cmd('o', pin, 0)
-            logger.debug(f'Set Arduino@{self.serial_port} pin [{pin}] LOW')
+            logger.debug(f'Set Arduino@{self.conn} pin [{pin}] LOW')
         if gui and emit:
             self.pin_state_changed.emit(pin, state)
 
@@ -148,7 +152,7 @@ class ArduinoGPIO(QObject):
             raise ValueError('val must be an int in the range 0 < val < 4095')
 
         self._send_cmd('d', self.dac_chs[ch], val & 0xFF, (val & 0xFF00) >> 8)
-        logger.debug(f'Set Arduino@{self.serial_port} dac ch [{ch}] to [{val}]')
+        logger.debug(f'Set Arduino@{self.conn} dac ch [{ch}] to [{val}]')
 
         if gui and emit:
             self.dac_val_changed.emit(ch, val)

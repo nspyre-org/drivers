@@ -12,21 +12,21 @@ import logging
 logger = logging.getLogger(__name__)
 
 class FW102C:
-    def __init__(self, com_port: str, channel_mapping=None, baud=115200, timeout: float = 10.0):
+    def __init__(self, serial_port: str, channel_mapping=None, baud=115200, timeout: float = 10.0):
         """Args:
-            com_port: serial COM port (see pyserial docs)
+            serial_port: serial COM port (see pyserial docs)
             channel_mapping: dictionary mapping an identifier to a channel, which can be used instead of the channel number e.g.
             {'filter1': 1, 'filter2': 2}
             baud: 9600 or 115200
             timeout: read timeout
         """
         self.channel_mapping = channel_mapping
-        self.com_port = com_port
+        self.serial_port = serial_port
         self.baud = baud
         self.timeout = timeout
 
     def __str__(self):
-        return f'{self.address} {self.idn}'
+        return f'{self.serial_port} {self.idn}'
 
     def __enter__(self):
         self.open()
@@ -36,10 +36,10 @@ class FW102C:
         self.close()
 
     def close(self):
-        self.serial_port.close()
+        self.conn.close()
 
     def open(self):
-        self.serial_port = serial.Serial(self.com_port, baudrate=self.baud, timeout=self.timeout)
+        self.conn = serial.Serial(self.serial_port, baudrate=self.baud, timeout=self.timeout)
         # send a dummy command to clear any previous messages
         self.idn = self._query('*idn')
         logger.info(f'Connected to [{self}].')
@@ -55,8 +55,8 @@ class FW102C:
         """
         logger.debug(f'sending message [{cmd}]')
         cmd += '\r'
-        self.serial_port.write(cmd.encode('ascii'))
-        response = self.serial_port.read_until('> '.encode('ascii')).decode('ascii')
+        self.conn.write(cmd.encode('ascii'))
+        response = self.conn.read_until('> '.encode('ascii')).decode('ascii')
         if '> ' not in response: 
             raise RuntimeError('Timed out waiting for response')
         # strip preceding message and trailing '\r> '

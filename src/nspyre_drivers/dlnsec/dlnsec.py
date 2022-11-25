@@ -13,19 +13,19 @@ import serial
 logger = logging.getLogger(__name__)
 
 class DLnsec():
-    def __init__(self, com_port: str, timeout=1.0):
+    def __init__(self, serial_port: str, timeout=1.0):
         """
         Args:
-            com_port: serial COM port (see pyserial docs)
+            serial_port: serial COM port (see pyserial docs)
         """
-        self.com_port = com_port
+        self.serial_port = serial_port
         self.timeout = timeout
 
     def open(self):
         """Connect to the laser."""
-        self.serial_port = serial.Serial(com_port, baudrate=9600, timeout=timeout)
-        self.serial_port.reset_input_buffer()
-        self.serial_port.reset_output_buffer()
+        self.conn = serial.Serial(self.serial_port, baudrate=9600, timeout=self.timeout)
+        self.conn.reset_input_buffer()
+        self.conn.reset_output_buffer()
         self.reboot()
         # query the laser serial number
         self.idn = self._query('*IDN')
@@ -35,7 +35,7 @@ class DLnsec():
 
     def close(self):
         """Disconnect from the laser."""
-        self.serial_port.close()
+        self.conn.close()
 
     def __enter__(self):
         return self
@@ -49,7 +49,7 @@ class DLnsec():
         # add a newline and encode the message into a binary string
         msg_bin = (msg + '\n').encode('ascii')
         # send the message on the serial port
-        self.serial_port.write(msg_bin)
+        self.conn.write(msg_bin)
         logger.debug(f'Sent message to DLnsec: [{msg}]')
         # wait for the laser to process the message
         time.sleep(0.1)
@@ -79,7 +79,7 @@ class DLnsec():
         """Send a query command to the laser and return the response."""
         self._send_raw(msg)
         # receive the response
-        response = self.serial_port.read_until(b'\n\r')
+        response = self.conn.read_until(b'\n\r')
         response = response.decode('ascii').strip('\n\r')
         logger.debug(f'Response from DLnsec: [{response}]')
 
