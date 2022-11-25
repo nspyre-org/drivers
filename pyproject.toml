@@ -12,7 +12,7 @@ maintainers = [
 	"Jacob Feder <jacobsfeder@gmail.com>"
 ]
 readme = "README.md"
-packages = [{include = "drivers", from = "src"}]
+packages = [{include = "nspyre_drivers", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.7"
