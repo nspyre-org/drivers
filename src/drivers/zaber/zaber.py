@@ -39,6 +39,7 @@ class ZaberStages:
         return self.axes.__next__()
 
     def __enter__(self):
+        self.open()
         return self
 
     def __exit__(self, *args):
