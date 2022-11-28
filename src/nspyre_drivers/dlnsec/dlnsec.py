@@ -38,6 +38,7 @@ class DLnsec():
         self.conn.close()
 
     def __enter__(self):
+        self.open()
         return self
 
     def __exit__(self, *args):
