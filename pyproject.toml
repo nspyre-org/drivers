@@ -28,6 +28,7 @@ dlipower = { version = "*", optional = true }
 seabreeze = { version = "*", optional = true }
 ximea-py = { version = "*", optional = true }
 zaber-motion = { version = "*", optional = true }
+nidaqmx = { version = "*", optional = true }
 
 [tool.poetry.extras]
 beaglebone = ["requests"]
@@ -35,6 +36,7 @@ dli_pdu = ["dlipower", "beautifulsoup4"]
 oceanoptics = ["seabreeze"]
 ximea = ["ximea-py"]
 zaber = ["zaber-motion"]
+nidaq = ["nidaqmx"]
 
 [build-system]
 requires = ["poetry-core"]
