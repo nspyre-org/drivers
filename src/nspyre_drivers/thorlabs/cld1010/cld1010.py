@@ -34,12 +34,12 @@ class CLD1010:
 
     def open(self):
         try:
-            self.device = self.rm.open_resource(self.address)
+            self.laser = self.rm.open_resource(self.address)
         except Exception as err:
             raise ConnectionError(f'Failed connecting to CLD1010 @ [{self.address}]') from err
         # 1 second timeout
-        self.device.timeout = 1000
-        self.idn = self.device.query('*IDN?')
+        self.laser.timeout = 1000
+        self.idn = self.laser.query('*IDN?')
         logger.info(f'Connected to CLD1010 [{self}].')
         return self
 
