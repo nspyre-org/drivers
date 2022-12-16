@@ -118,7 +118,9 @@ class HR2000ES():
             logger.info("An external trigger rising edge will start the acquisition. Only one acquisition will be performed for each External Trigger pulse, no matter what the pulses' duration is.")
             self.spec.trigger_mode(mode)
         else:
-            raise ValueError(f"Invalid mode selection OR if 1,2 I don't know what the mode is: {mode}")
+            self.spec.trigger_mode(mode)
+            logger.info(f"Warning not sure what mode {mode} is.")
+            #raise ValueError(f"Invalid mode selection OR if 1,2 I don't know what the mode is: {mode}")
 
     # def _set_trigger_mode(self, mode):
     #   self.spec.trigger_mode(mode)
