@@ -7,7 +7,7 @@ For installation on Ubunutu:
 - Download https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html
 - extract the zip file
 - install the "drivers" package e.g.: sudo apt install ./ni-ubuntu2204firstlook-drivers-stream.deb
-- install the ni-daqmx package: sudo apt install ni-daqmx 
+- install the ni-daqmx package: sudo apt install ni-daqmx (may need to run sudo apt update)
 - sudo dkms autoinstall
 - reboot
 """
