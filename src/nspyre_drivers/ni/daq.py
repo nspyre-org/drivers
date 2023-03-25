@@ -9,7 +9,7 @@ For installation on Ubunutu:
 - install the "drivers" package e.g.: sudo apt install ./ni-ubuntu2204firstlook-drivers-stream.deb
 - install the ni-daqmx package: sudo apt install ni-daqmx (may need to run sudo apt update)
 - sudo dkms autoinstall
-- BEN: needed to run python -m pip install nidaqmx
+- (BEN: I needed to run python -m pip install nidaqmx)
 - reboot
 """
 
