@@ -31,7 +31,7 @@ class DLnsec():
         self.idn = self._query('*IDN')
         if not self.idn:
             raise RuntimeError('Failed getting laser ID number')
-        logging.info(f'Connected to DLnsec [{self.idn}]')
+        logger.info(f'Connected to DLnsec [{self.idn}]')
 
     def close(self):
         """Disconnect from the laser."""
