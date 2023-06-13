@@ -22,6 +22,7 @@ A full listing of the tags is below.
 
 ```
 beaglebone
+cobolt
 dli_pdu
 oceanoptics
 ximea

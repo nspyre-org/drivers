@@ -46,8 +46,8 @@ class CoboltWidget(QtWidgets.QWidget):
         def set_power(spinbox):
             self.laser.set_power(spinbox.value()*1000)
             self.laser.set_modulation_power(spinbox.value()*1000)
-        self.power_spinbox.sigValueChanged.connect(set_power)
         self.power_spinbox.setValue(value=0)
+        self.power_spinbox.sigValueChanged.connect(set_power)
         layout.addWidget(self.power_spinbox, layout_row, 1)
         layout_row += 1
 

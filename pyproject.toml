@@ -29,9 +29,11 @@ seabreeze = { version = "*", optional = true }
 ximea-py = { version = "*", optional = true }
 zaber-motion = { version = "*", optional = true }
 nidaqmx = { version = "*", optional = true }
+pycobolt = { git = "https://github.com/cobolt-lasers/pycobolt.git", optional = true}
 
 [tool.poetry.extras]
 beaglebone = ["requests"]
+cobolt = ["pycobolt"]
 dli_pdu = ["dlipower", "beautifulsoup4"]
 oceanoptics = ["seabreeze"]
 ximea = ["ximea-py"]
