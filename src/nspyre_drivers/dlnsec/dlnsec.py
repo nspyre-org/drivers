@@ -10,7 +10,7 @@ import logging
 
 import serial
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 class DLnsec():
     def __init__(self, serial_port: str, timeout=1.0):
@@ -31,7 +31,7 @@ class DLnsec():
         self.idn = self._query('*IDN')
         if not self.idn:
             raise RuntimeError('Failed getting laser ID number')
-        logger.info(f'Connected to DLnsec [{self.idn}]')
+        _logger.info(f'Connected to DLnsec [{self.idn}]')
 
     def close(self):
         """Disconnect from the laser."""
@@ -51,7 +51,7 @@ class DLnsec():
         msg_bin = (msg + '\n').encode('ascii')
         # send the message on the serial port
         self.conn.write(msg_bin)
-        logger.debug(f'Sent message to DLnsec: [{msg}]')
+        _logger.debug(f'Sent message to DLnsec: [{msg}]')
         # wait for the laser to process the message
         time.sleep(0.1)
 
@@ -70,7 +70,7 @@ class DLnsec():
                 attempts -= 1
                 err_str = f'Failed sending DLnsec command [{msg}]: response [{response}]'
                 if attempts:
-                    logger.warning(err_str)
+                    _logger.warning(err_str)
                 else:
                     raise RuntimeError(err_str)
                 # wait a moment before trying again
@@ -82,7 +82,7 @@ class DLnsec():
         # receive the response
         response = self.conn.read_until(b'\n\r')
         response = response.decode('ascii').strip('\n\r')
-        logger.debug(f'Response from DLnsec: [{response}]')
+        _logger.debug(f'Response from DLnsec: [{response}]')
 
         return response
 
