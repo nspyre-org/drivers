@@ -14,7 +14,7 @@ import logging
 
 from pyvisa import ResourceManager
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 class DP832:
     def __init__(self, address):
@@ -35,7 +35,7 @@ class DP832:
         self.close()
 
     def __str__(self):
-        return f'{self.address} {self.idn}'
+        return f'DP832 {self.address} {self.idn}'
 
     def open(self):
         try:
@@ -44,30 +44,32 @@ class DP832:
             raise ConnectionError(f'Failed connecting to DP832 @ [{self.address}]') from err
         # 1 second timeout
         self.device.timeout = 1000
-        self.idn = self.device.query('*IDN?')
-        logger.info(f'Connected to DP832 [{self}].')
-
+        self.idn = self.device.query('*IDN?').strip()
+        _logger.info(f'Connected to DP832 [{self}].')
+        # see table 1-5
+        self.device.write(f'*ESE {1|4|8|16|32}')
+        self.device.write(f'*SRE {8|32}')
         return self
 
     def close(self):
         self.device.close()
 
-    def _write(self, cmd):
-        """Send a VISA command to the device.
+    def _send_cmd(self, cmd):
+        """Send a VISA command to the device and checks for errors.
         Args:
             cmd: command string to send
         """
         self.device.write(cmd)
-        # sleep to allow time for the command to take effect
-        time.sleep(self.delay)
-
-    def _select_output(self, ch):
-        """Select the channel that will receive subsequent commands.
-
-        Args:
-            ch: output channel (e.g. 1, 2, 3)
-        """
-        self._write(f':INST:NSEL {ch}')
+        self.device.write('*WAI')
+        standard_event_reg = int(self.device.query('*ESR?').strip())
+        summary_reg = int(self.device.query('*STB?').strip())
+        questionable_status_reg = int(self.device.query(':STAT:QUES?').strip())
+        _logger.debug(f'[{self}] sent command [{cmd}], ESR [{standard_event_reg}],'
+            f' STB [{summary_reg}], QSR [{questionable_status_reg}]')
+        if standard_event_reg & 32:
+            raise RuntimeError(f'DP832 [{self}] command [{cmd}] contains a syntax error.')
+        if standard_event_reg & 16:
+            raise RuntimeError(f'DP832 [{self}] command [{cmd}] execution error.')
 
     def toggle_output(self, ch, state):
         """Turn the channel output on or off.
@@ -77,12 +79,12 @@ class DP832:
             state: True to enable the channel, False to disable
         """
         if state:
-            self._write(f':OUTP CH{ch},ON')
+            self._send_cmd(f':OUTP CH{ch},ON')
         else:
-            self._write(f':OUTP CH{ch},OFF')
+            self._send_cmd(f':OUTP CH{ch},OFF')
 
     def set_voltage(self, ch, val, confirm=True, timeout=1.0, delta=0.03):
-        """Set the channel voltage.
+        """Set the voltage.
 
         Args:
             ch: output channel (e.g. 1, 2, 3)
@@ -92,8 +94,7 @@ class DP832:
             timeout: max allowed time (s) to reach the set voltage
             delta: acceptable delta from set voltage (volts)
         """
-        self._select_output(ch)
-        self._write(f':VOLT {val}')
+        self._send_cmd(f':SOUR{ch}:VOLT {val}')
         if confirm:
             timeout = time.time() + timeout
             actual = self.measure_voltage(ch=ch)
@@ -102,6 +103,14 @@ class DP832:
                 if time.time() > timeout:
                     raise TimeoutError(f'Measured channel {ch} voltage [{actual}] did not reach set voltage [{val}].')
                 actual = self.measure_voltage(ch=ch)
+
+    def get_voltage(self, ch):
+        """Get the voltage setpoint.
+        
+        Args:
+            ch: output channel (e.g. 1, 2, 3)
+        """
+        return float(self.device.query(f':SOUR{ch}:VOLT?'))
 
     def set_current(self, ch, val, confirm=True, timeout=1.0, delta=0.02):
         """Set the channel current.
@@ -114,8 +123,7 @@ class DP832:
             timeout: max allowed time (s) to reach the set current
             delta: acceptable delta from set current (amps)
         """
-        self._select_output(ch)
-        self._write(f':CURR {val}')
+        self._send_cmd(f':SOUR{ch}:CURR {val}')
         if confirm:
             timeout = time.time() + timeout
             actual = self.measure_current(ch=ch)
@@ -125,6 +133,14 @@ class DP832:
                     raise TimeoutError(f'Measured channel {ch} current [{actual}] did not reach set current [{val}].')
                 actual = self.measure_current(ch=ch)
 
+    def get_current(self, ch):
+        """Get the current setpoint.
+        
+        Args:
+            ch: output channel (e.g. 1, 2, 3)
+        """
+        return float(self.device.query(f':SOUR{ch}:CURR?'))
+
     def set_ovp(self, ch, val):
         """Set the channel over-voltage protection.
 
@@ -132,8 +148,7 @@ class DP832:
             ch: output channel (e.g. 1, 2, 3)
             val: channel ovp limit
         """
-        self._select_output(ch)
-        self._write(f':VOLT:PROT {val}')
+        self._send_cmd(f':OUTP:OVP:VAL CH{ch},{val}')
 
     def toggle_ovp(self, ch, state):
         """Enable or disable the channel over-voltage protection.
@@ -142,11 +157,10 @@ class DP832:
             ch: output channel (e.g. 1, 2, 3)
             state: True to enable the OVP, False to disable
         """
-        self._select_output(ch)
         if state:
-            self._write(f':VOLT:PROT:STAT ON')
+            self._send_cmd(f':OUTP:OVP CH{ch},ON')
         else:
-            self._write(f':VOLT:PROT:STAT OFF')
+            self._send_cmd(f':OUTP:OVP CH{ch},FF')
 
     def set_ocp(self, ch, val):
         """Set the channel over-current protection.
@@ -155,8 +169,7 @@ class DP832:
             ch: output channel (e.g. 1, 2, 3)
             val: channel ocp limit
         """
-        self._select_output(ch)
-        self._write(f':CURR:PROT {val}')
+        self._send_cmd(f':OUTP:OCP:VAL CH{ch},{val}')
 
     def toggle_ocp(self, ch, state):
         """Enable or disable the channel over-current protection.
@@ -165,11 +178,10 @@ class DP832:
             ch: output channel (e.g. 1, 2, 3)
             state: True to enable the OCP, False to disable
         """
-        self._select_output(ch)
         if state:
-            self._write(f':CURR:PROT:STAT ON')
+            self._send_cmd(f':OUTP:OCP CH{ch},ON')
         else:
-            self._write(f':CURR:PROT:STAT OFF')
+            self._send_cmd(f':OUTP:OCP CH{ch},OFF')
 
     def measure_voltage(self, ch):
         """Return the actual channel voltage.
