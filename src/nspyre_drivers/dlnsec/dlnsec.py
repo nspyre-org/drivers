@@ -93,8 +93,13 @@ class DLnsec():
         self._send(f'PWR{p}')
 
     def cw_mode(self):
-        """Put the laser into CW output mode."""
+        """Put the laser into CW mode. This isn't a real CW mode, because a low
+        on the trigger input will still turn the lasing off."""
         self._send('LASE')
+
+    def trig_mode(self):
+        """Put the laser into external trigger mode."""
+        self._send('EXT')
 
     def on(self):
         """Turn the output stage on."""
