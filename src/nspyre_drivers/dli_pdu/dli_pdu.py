@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 TIMEOUT = 5.0
 
 class DLIPDU():
-    def __init__(self, config=None, hostname='192.168.0.100', userid='admin', password='1234', retries=1, timeout=TIMEOUT, **kwargs):
+    def __init__(self, hostname, config=None, userid='admin', password='1234', retries=1, timeout=TIMEOUT, **kwargs):
         """
         Args:
             config: dict with integer keys mapping to the desired names of the outlets.
