@@ -15,12 +15,11 @@ class PM100D:
         Args:
             address: PyVISA resource path.
         """
-        self.rm = ResourceManager('@py')
+        self.rm = ResourceManager()
         self.address = address
 
-        logger.info(f'Connected to PM100D [{self.address}].')
-
     def __enter__(self):
+        self.open()
         return self
 
     def __exit__(self, *args):
@@ -41,21 +40,21 @@ class PM100D:
         return self
 
     def close(self):
-        self.pm.close()
+        self.device.close()
 
     def idn(self):
-        return self.pm.query('*IDN?')
+        return self.device.query('*IDN?')
 
     def power(self):
-        return float(self.pm.query('MEAS:POWER?'))
+        return float(self.device.query('MEAS:POWER?'))
 
     def get_correction_wavelength(self):
-        return float(self.pm.query('SENS:CORR:WAV?'))
+        return float(self.device.query('SENS:CORR:WAV?'))
 
     def set_correction_wavelength(self, wavelength):
-        self.pm.write('SENSE:CORRECTION:WAVELENGTH {}'.format(wavelength))
+        self.device.write('SENSE:CORRECTION:WAVELENGTH {}'.format(wavelength))
 
     def correction_wavelength_range(self):
         cmd = 'SENSE:CORRECTION:WAVELENGTH? {}'
         cmd_vals = ['MIN', 'MAX']
-        return tuple(float(self.pm.query(cmd.format(cmd_val))) for cmd_val in cmd_vals)
+        return tuple(float(self.device.query(cmd.format(cmd_val))) for cmd_val in cmd_vals)
