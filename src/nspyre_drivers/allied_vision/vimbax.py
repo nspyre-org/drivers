@@ -68,11 +68,15 @@ class VimbaX:
 
         _logger.info(f'Connected to VimbaX camera with '
             f'id [{self.driver.get_id()}] '
-            f'serial [{self.get_feature("DeviceSerialNumber")}]'
+            f'serial [{self.get_feature("DeviceSerialNumber")}].'
         )
 
     def disconnect(self):
         """Disconnect from the camera."""
+        _logger.info(f'Disconnected from VimbaX camera with '
+            f'id [{self.driver.get_id()}] '
+            f'serial [{self.get_feature("DeviceSerialNumber")}].'
+        )
         if self.driver is not None:
             self.driver.__exit__(None, None, None)
         self.vmb.__exit__(None, None, None)
