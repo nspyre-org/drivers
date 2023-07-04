@@ -70,6 +70,7 @@ In order to minimize reinventing the wheel, below is a list of other sources of
 python instrument drivers. Please contribute if you find other useful sources!
 
 [pycobolt](https://github.com/cobolt-lasers/pycobolt)
+[Instrumental] (https://github.com/mabuchilab/Instrumental)
 
 ## Contributing
 
