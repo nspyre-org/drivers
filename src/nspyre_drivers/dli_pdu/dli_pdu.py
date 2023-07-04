@@ -72,6 +72,9 @@ class DLIPDU():
 
         return outlet
 
+    def __str__(self):
+        return f'DLU PDU [{self.hostname}]'
+
     def __enter__(self):
         self.connect()
         return self
@@ -83,6 +86,12 @@ class DLIPDU():
         """Connect to the switch."""
         # TODO connection timeout not working
         self.switch = dlipower.PowerSwitch(hostname=self.hostname, userid=self.userid, password=self.password, retries=self.retries, timeout=self.timeout, **self.kwargs)
+
+        if self.switch.verify():
+            if self.switch.statuslist() is None:
+                raise ConnectionError(f'{self} is accessible but connection still failed. This may be due to an incorrect userid/password.')
+        else:
+            raise ConnectionError(f'Failed connecting to {self}.')
 
         # gather the current outlet names
         current_outlets = set()
