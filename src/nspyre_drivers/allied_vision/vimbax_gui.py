@@ -239,8 +239,8 @@ class VimbaXCameraWidget(QtWidgets.QWidget):
         qt_img = QtGui.QImage(img_np.data, width, height, QtGui.QImage.Format.Format_Grayscale8)
         # scale to the window size
         scaled_qt_img = qt_img.scaled(
-            self.image_label.size().width(),
-            self.image_label.size().height(),
+            self.image_label.frameGeometry().width(),
+            self.image_label.frameGeometry().height(),
             QtCore.Qt.AspectRatioMode.KeepAspectRatio
         )
         self.image_label.setPixmap(QtGui.QPixmap.fromImage(scaled_qt_img))
