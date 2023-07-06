@@ -35,7 +35,7 @@ class DP832:
         self.close()
 
     def __str__(self):
-        return f'DP832 {self.address} {self.idn}'
+        return f'DP832 [{self.address}] [{self.idn}]'
 
     def open(self):
         try:
@@ -95,6 +95,7 @@ class DP832:
             delta: acceptable delta from set voltage (volts)
         """
         self._send_cmd(f':SOUR{ch}:VOLT {val}')
+        _logger.info(f'Setting {self} ch [{ch}] to [{val} V].')
         if confirm:
             timeout = time.time() + timeout
             actual = self.measure_voltage(ch=ch)
@@ -103,6 +104,7 @@ class DP832:
                 if time.time() > timeout:
                     raise TimeoutError(f'Measured channel {ch} voltage [{actual}] did not reach set voltage [{val}].')
                 actual = self.measure_voltage(ch=ch)
+            _logger.info(f'{self} ch [{ch}] reached setpoint [{val} V].')
 
     def get_voltage(self, ch):
         """Get the voltage setpoint.
@@ -124,6 +126,8 @@ class DP832:
             delta: acceptable delta from set current (amps)
         """
         self._send_cmd(f':SOUR{ch}:CURR {val}')
+        _logger.info(f'Setting {self} ch [{ch}] to [{val} A].')
+
         if confirm:
             timeout = time.time() + timeout
             actual = self.measure_current(ch=ch)
@@ -132,6 +136,7 @@ class DP832:
                 if time.time() > timeout:
                     raise TimeoutError(f'Measured channel {ch} current [{actual}] did not reach set current [{val}].')
                 actual = self.measure_current(ch=ch)
+            _logger.info(f'{self} ch [{ch}] reached setpoint [{val} A].')
 
     def get_current(self, ch):
         """Get the current setpoint.
@@ -149,6 +154,7 @@ class DP832:
             val: channel ovp limit
         """
         self._send_cmd(f':OUTP:OVP:VAL CH{ch},{val}')
+        _logger.info(f'{self} ch [{ch}] set OVP [{val} V].')
 
     def toggle_ovp(self, ch, state):
         """Enable or disable the channel over-voltage protection.
@@ -159,8 +165,10 @@ class DP832:
         """
         if state:
             self._send_cmd(f':OUTP:OVP CH{ch},ON')
+            _logger.info(f'{self} ch [{ch}] set OVP ON.')
         else:
             self._send_cmd(f':OUTP:OVP CH{ch},FF')
+            _logger.info(f'{self} ch [{ch}] set OVP OFF.')
 
     def set_ocp(self, ch, val):
         """Set the channel over-current protection.
@@ -170,6 +178,7 @@ class DP832:
             val: channel ocp limit
         """
         self._send_cmd(f':OUTP:OCP:VAL CH{ch},{val}')
+        _logger.info(f'{self} ch [{ch}] set OCP [{val} A].')
 
     def toggle_ocp(self, ch, state):
         """Enable or disable the channel over-current protection.
@@ -180,8 +189,10 @@ class DP832:
         """
         if state:
             self._send_cmd(f':OUTP:OCP CH{ch},ON')
+            _logger.info(f'{self} ch [{ch}] set OCP ON.')
         else:
             self._send_cmd(f':OUTP:OCP CH{ch},OFF')
+            _logger.info(f'{self} ch [{ch}] set OCP OFF.')
 
     def measure_voltage(self, ch):
         """Return the actual channel voltage.
