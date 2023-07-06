@@ -35,7 +35,7 @@ class DP832:
         self.close()
 
     def __str__(self):
-        return f'DP832 [{self.address}] [{self.idn}]'
+        return f'DP832 [{self.address}]'
 
     def open(self):
         try:
