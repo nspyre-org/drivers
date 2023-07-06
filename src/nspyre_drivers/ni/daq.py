@@ -115,12 +115,14 @@ class DAQ:
             line: port line string e.g. 'line0', 'line1', ...
             state: output state boolean
         """
+        state = obtain(state)
         with nidaqmx.Task() as task:
             task.do_channels.add_do_chan(f'{self.dev.name}/{port}/{line}')
             task.write(state)
 
 if __name__ == '__main__':
     import time
+
     # enable logging to console
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s.%(msecs)03d [%(levelname)8s] %(message)s', datefmt='%m-%d-%Y %H:%M:%S')
     daq = DAQ(serial_num='20BA17A')
