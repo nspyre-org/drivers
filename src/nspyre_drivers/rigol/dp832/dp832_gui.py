@@ -7,6 +7,7 @@ All rights reserved.
 import logging
 from functools import partial
 
+from pyqtgraph.Qt import QtCore
 from pyqtgraph.Qt import QtWidgets
 from pyqtgraph import SpinBox
 
@@ -51,7 +52,8 @@ class DP832Widget(QtWidgets.QWidget):
             # voltage spinbox
             volts_layout = QtWidgets.QHBoxLayout()
             volts_layout.addWidget(QtWidgets.QLabel('Volts'))
-            volts_spinbox = SpinBox(value=self.driver.get_voltage(ch), bounds=(0, 30), siPrefix=False)
+            volts_spinbox = SpinBox(suffix='V', value=self.driver.get_voltage(ch), bounds=(0, 30), siPrefix=True)
+            volts_spinbox.setMinimumSize(QtCore.QSize(100, 0))
             def set_volts(spinbox, ch):
                 self.driver.set_voltage(ch, spinbox.value(), confirm=False)
             volts_spinbox.sigValueChanged.connect(partial(set_volts, ch=ch))
@@ -62,7 +64,7 @@ class DP832Widget(QtWidgets.QWidget):
             # current spinbox
             amps_layout = QtWidgets.QHBoxLayout()
             amps_layout.addWidget(QtWidgets.QLabel('Amps'))
-            amps_spinbox = SpinBox(value=self.driver.get_current(ch), bounds=(0, 3), siPrefix=False)
+            amps_spinbox = SpinBox(suffix='A', value=self.driver.get_current(ch), bounds=(0, 3), siPrefix=True)
             def set_amps(spinbox, ch):
                 self.driver.set_current(ch, spinbox.value(), confirm=False)
             amps_spinbox.sigValueChanged.connect(partial(set_amps, ch=ch))
