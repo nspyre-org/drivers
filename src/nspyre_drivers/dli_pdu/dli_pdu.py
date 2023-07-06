@@ -8,6 +8,25 @@ There is a bug in the dlipower module that causes things to fail after the sessi
 To increase the session timeout follow the instructions under "Can I set the session timeout longer?"
 http://www.digital-loggers.com/lpcfaqs.html#MakeSessionLonger
 
+Copied here for posterity:
+
+Log into the unit and choose the External APIs link.
+If the REST API is not enabled, check the REST API checkbox and press submit.
+Scroll own to the "Browse the REST API" link Eg: 192.168.0.100/restapi/
+Select the auth (Authentication server object) link
+Select Cookie timeout Eg: http://192.168.0.100/restapi/auth/cookie_timeout/
+
+Enter a time in seconds.
+3600 = 1 hour
+7200 = 2 hours
+86400 = 1 day
+604800 = 1 week
+
+Click the PUT button.
+
+The next time you login, the timeout will take effect.
+
+
 Author: Jacob Feder
 Date: 2/11/2022
 """
