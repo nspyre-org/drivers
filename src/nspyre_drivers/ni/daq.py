@@ -3,18 +3,20 @@
 nidaqmx low-level driver needs to be installed first: https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html
 
 For installation on Ubunutu:
-- Not all hardware is compatible, first check: https://www.ni.com/en-us/support/documentation/compatibility/21/ni-hardware-and-operating-system-compatibility.html
-- Download https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html
+- not all hardware is compatible, first check: https://www.ni.com/en-us/support/documentation/compatibility/21/ni-hardware-and-operating-system-compatibility.html
+- download https://www.ni.com/en-us/support/downloads/drivers/download.ni-daqmx.html
 - extract the zip file
 - install the "drivers" package e.g.: sudo apt install ./ni-ubuntu2204firstlook-drivers-stream.deb
 - install the ni-daqmx package: sudo apt install ni-daqmx (may need to run sudo apt update)
 - sudo dkms autoinstall
-- (BEN: I needed to run python -m pip install nidaqmx)
 - reboot
 """
 
 import logging
 import nidaqmx
+
+# rpyc obtain method
+from ..common import obtain
 
 logger = logging.getLogger(__name__)
 
@@ -88,6 +90,7 @@ class DAQ:
             ch: analog output channel string e.g. 'ao0', 'ao1', ...
             val: analog output value (V)
         """
+        val = obtain(val)
         with nidaqmx.Task() as task:
             task.ao_channels.add_ao_voltage_chan(f'{self.dev.name}/{ch}')
             task.write(val, auto_start=True)
