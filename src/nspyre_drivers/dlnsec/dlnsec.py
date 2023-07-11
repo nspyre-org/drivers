@@ -44,7 +44,7 @@ class DLnsec():
         if self.connected:
             return f'[{self.idn}]'
         else:
-            return f'DLnec [Not Connected]'
+            return f'DLnsec [Not Connected]'
 
     def __enter__(self):
         self.open()
