@@ -83,7 +83,7 @@ class DP832:
         else:
             self._send_cmd(f':OUTP CH{ch},OFF')
 
-    def set_voltage(self, ch, val, confirm=True, timeout=1.0, delta=0.03):
+    def set_voltage(self, ch, val, confirm=True, timeout=2.0, delta=0.03):
         """Set the voltage.
 
         Args:
