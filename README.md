@@ -27,6 +27,8 @@ dli_pdu
 oceanoptics
 ximea
 zaber
+nidaq
+kinesis
 ```
 
 For some USB drivers on Linux, you need to grant user access to the drivers in 
