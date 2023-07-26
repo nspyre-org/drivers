@@ -71,7 +71,7 @@ class KinesisWidget(QtWidgets.QWidget):
                 layout_row += 1
 
                 ###############
-                # ch position
+                # channel position
                 ###############
 
                 # position label
