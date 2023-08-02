@@ -45,7 +45,7 @@ class DP832:
         # 1 second timeout
         self.device.timeout = 1000
         self.idn = self.device.query('*IDN?').strip()
-        _logger.info(f'Connected to DP832 [{self}].')
+        _logger.info(f'Connected to DP832 {self}.')
         # see table 1-5
         self.device.write(f'*ESE {1|4|8|16|32}')
         self.device.write(f'*SRE {8|32}')
@@ -54,45 +54,49 @@ class DP832:
     def close(self):
         self.device.close()
 
-    def _send_cmd(self, cmd):
+    def _send_cmd(self, cmd: str):
         """Send a VISA command to the device and checks for errors.
+
         Args:
-            cmd: command string to send
+            cmd: Command string to send.
+
+        Raises:
+            RuntimeError: Error with the command syntax or execution.
         """
         self.device.write(cmd)
         self.device.write('*WAI')
         standard_event_reg = int(self.device.query('*ESR?').strip())
         summary_reg = int(self.device.query('*STB?').strip())
         questionable_status_reg = int(self.device.query(':STAT:QUES?').strip())
-        _logger.debug(f'[{self}] sent command [{cmd}], ESR [{standard_event_reg}],'
+        _logger.debug(f'{self} sent command [{cmd}], ESR [{standard_event_reg}],'
             f' STB [{summary_reg}], QSR [{questionable_status_reg}]')
         if standard_event_reg & 32:
-            raise RuntimeError(f'DP832 [{self}] command [{cmd}] contains a syntax error.')
+            raise RuntimeError(f'{self} command [{cmd}] contains a syntax error.')
         if standard_event_reg & 16:
-            raise RuntimeError(f'DP832 [{self}] command [{cmd}] execution error.')
+            raise RuntimeError(f'{self} command [{cmd}] execution error.')
 
-    def toggle_output(self, ch, state):
+    def toggle_output(self, ch: int, state: bool):
         """Turn the channel output on or off.
 
         Args:
-            ch: output channel (e.g. 1, 2, 3)
-            state: True to enable the channel, False to disable
+            ch: Output channel (e.g. 1, 2, 3).
+            state: True to enable the channel, False to disable.
         """
         if state:
             self._send_cmd(f':OUTP CH{ch},ON')
         else:
             self._send_cmd(f':OUTP CH{ch},OFF')
 
-    def set_voltage(self, ch, val, confirm=True, timeout=2.0, delta=0.03):
+    def set_voltage(self, ch: int, val: float, confirm: bool = True, timeout: float = 2.0, delta: float = 0.03):
         """Set the voltage.
 
         Args:
-            ch: output channel (e.g. 1, 2, 3)
-            val: channel output (volts)
-            confirm: measure the voltage continuously until it is within 
+            ch: Output channel (e.g. 1, 2, 3).
+            val: Channel output (volts).
+            confirm: Measure the voltage continuously until it is within 
                     delta (volts) of the set voltage.
-            timeout: max allowed time (s) to reach the set voltage
-            delta: acceptable delta from set voltage (volts)
+            timeout: Max allowed time (s) to reach the set voltage.
+            delta: Acceptable delta from set voltage (volts).
         """
         self._send_cmd(f':SOUR{ch}:VOLT {val}')
         _logger.info(f'Setting {self} ch [{ch}] to [{val} V].')
@@ -106,7 +110,7 @@ class DP832:
                 actual = self.measure_voltage(ch=ch)
             _logger.info(f'{self} ch [{ch}] reached setpoint [{val} V].')
 
-    def get_voltage(self, ch):
+    def get_voltage(self, ch: int) -> float:
         """Get the voltage setpoint.
         
         Args:
@@ -114,7 +118,7 @@ class DP832:
         """
         return float(self.device.query(f':SOUR{ch}:VOLT?'))
 
-    def set_current(self, ch, val, confirm=True, timeout=1.0, delta=0.02):
+    def set_current(self, ch: int, val: float, confirm: bool = True, timeout: float = 1.0, delta: float = 0.02):
         """Set the channel current.
 
         Args:
@@ -138,7 +142,7 @@ class DP832:
                 actual = self.measure_current(ch=ch)
             _logger.info(f'{self} ch [{ch}] reached setpoint [{val} A].')
 
-    def get_current(self, ch):
+    def get_current(self, ch: int):
         """Get the current setpoint.
         
         Args:
@@ -146,22 +150,46 @@ class DP832:
         """
         return float(self.device.query(f':SOUR{ch}:CURR?'))
 
-    def set_ovp(self, ch, val):
+    def get_ovp_alarm(self, ch: int) -> True:
+        """Return whether there was an over-voltage protection event.
+
+        Args:
+            ch: Output channel (e.g. 1, 2, 3).
+        """
+        alarm = self.device.query(f':OUTP:OVP:ALAR? CH{ch}').strip()
+        _logger.debug(f'{self} ch [{ch}] OVP alarm status [{alarm}].')
+        if alarm == 'YES':
+            return True
+        elif alarm == 'NO':
+            return False
+        else:
+            raise RuntimeError(f'Unrecognized response to OVP alarm status query [{alarm}].')
+
+    def clear_ovp_alarm(self, ch: int) -> True:
+        """Clear the over-voltage protection event.
+
+        Args:
+            ch: Output channel (e.g. 1, 2, 3).
+        """
+        self._send_cmd(f':OUTP:OVP:CLEAR CH{ch}')
+        _logger.info(f'{self} ch [{ch}] cleared OVP alarm.')
+
+    def set_ovp(self, ch: int, val: float):
         """Set the channel over-voltage protection.
 
         Args:
-            ch: output channel (e.g. 1, 2, 3)
-            val: channel ovp limit
+            ch: Output channel (e.g. 1, 2, 3).
+            val: Channel OVP limit.
         """
         self._send_cmd(f':OUTP:OVP:VAL CH{ch},{val}')
         _logger.info(f'{self} ch [{ch}] set OVP [{val} V].')
 
-    def toggle_ovp(self, ch, state):
+    def toggle_ovp(self, ch: int, state: bool):
         """Enable or disable the channel over-voltage protection.
 
         Args:
-            ch: output channel (e.g. 1, 2, 3)
-            state: True to enable the OVP, False to disable
+            ch: Output channel (e.g. 1, 2, 3).
+            state: True to enable the OVP, False to disable.
         """
         if state:
             self._send_cmd(f':OUTP:OVP CH{ch},ON')
@@ -170,22 +198,46 @@ class DP832:
             self._send_cmd(f':OUTP:OVP CH{ch},FF')
             _logger.info(f'{self} ch [{ch}] set OVP OFF.')
 
-    def set_ocp(self, ch, val):
+    def get_ocp_alarm(self, ch: int) -> True:
+        """Return whether there was an over-current protection event.
+
+        Args:
+            ch: Output channel (e.g. 1, 2, 3).
+        """
+        alarm = self.device.query(f':OUTP:OCP:ALAR? CH{ch}').strip()
+        _logger.debug(f'{self} ch [{ch}] OCP alarm status [{alarm}].')
+        if alarm == 'YES':
+            return True
+        elif alarm == 'NO':
+            return False
+        else:
+            raise RuntimeError(f'Unrecognized response to OCP alarm status query [{alarm}].')
+
+    def clear_ocp_alarm(self, ch: int) -> True:
+        """Clear the over-current protection event.
+
+        Args:
+            ch: Output channel (e.g. 1, 2, 3).
+        """
+        self._send_cmd(f':OUTP:OCP:CLEAR CH{ch}')
+        _logger.info(f'{self} ch [{ch}] cleared OCP alarm.')
+
+    def set_ocp(self, ch: int, val: float):
         """Set the channel over-current protection.
 
         Args:
-            ch: output channel (e.g. 1, 2, 3)
-            val: channel ocp limit
+            ch: Output channel (e.g. 1, 2, 3).
+            val: Channel OCP limit.
         """
         self._send_cmd(f':OUTP:OCP:VAL CH{ch},{val}')
         _logger.info(f'{self} ch [{ch}] set OCP [{val} A].')
 
-    def toggle_ocp(self, ch, state):
+    def toggle_ocp(self, ch: int, state: bool):
         """Enable or disable the channel over-current protection.
 
         Args:
-            ch: output channel (e.g. 1, 2, 3)
-            state: True to enable the OCP, False to disable
+            ch: Output channel (e.g. 1, 2, 3).
+            state: True to enable the OCP, False to disable.
         """
         if state:
             self._send_cmd(f':OUTP:OCP CH{ch},ON')
@@ -194,40 +246,41 @@ class DP832:
             self._send_cmd(f':OUTP:OCP CH{ch},OFF')
             _logger.info(f'{self} ch [{ch}] set OCP OFF.')
 
-    def measure_voltage(self, ch):
+    def measure_voltage(self, ch: int) -> float:
         """Return the actual channel voltage.
 
         Args:
-            ch: output channel (e.g. 1, 2, 3)
+            ch: Output channel (e.g. 1, 2, 3).
 
         Returns:
-            Channel voltage as a float 
+            Channel voltage.
         """
         volt = float(self.device.query(f':MEAS:VOLT? CH{ch}'))
+        _logger.debug(f'{self} ch [{ch}] measured voltage [{volt}].')
         time.sleep(self.delay)
         return volt
 
-    def measure_current(self, ch):
+    def measure_current(self, ch: int) -> float:
         """Return the actual channel current.
 
         Args:
-            ch: output channel (e.g. 1, 2, 3)
+            ch: Output channel (e.g. 1, 2, 3).
 
         Returns:
-            Channel current as a float 
+            Channel current. 
         """
         curr = float(self.device.query(f':MEAS:CURR? CH{ch}'))
         time.sleep(self.delay)
         return curr
 
-    def measure_power(self, ch):
+    def measure_power(self, ch: int) -> float:
         """Return the actual channel power.
 
         Args:
-            ch: output channel (e.g. 1, 2, 3)
+            ch: Output channel (e.g. 1, 2, 3).
 
         Returns:
-            Channel power as a float 
+            Channel power.
         """
         power = float(self.device.query(f':MEAS:POWE? CH{ch}'))
         time.sleep(self.delay)
