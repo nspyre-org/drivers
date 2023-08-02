@@ -4,6 +4,9 @@ https://www.digital-loggers.com/222spec.pdf
 
 This is a thin wrapper around the dlipower module that makes the interface a little more convenient.
 
+There is a bug in the dlipower module that causes things to fail if the username isn't "admin".
+https://github.com/dwighthubbard/python-dlipower/issues/45
+
 There is a bug in the dlipower module that causes things to fail after the session times out.
 To increase the session timeout follow the instructions under "Can I set the session timeout longer?"
 http://www.digital-loggers.com/lpcfaqs.html#MakeSessionLonger
