@@ -1,6 +1,10 @@
 """Qt Widget for a Thorlabs Kinesis stage. The stage driver objects are assumed
 to be pylablib KinesisMotor objects.
 
+There is a bug with the pylablib driver that sometimes creates the following error:
+pylablib.devices.Thorlabs.base.ThorlabsBackendError: backend exception: 'read returned less than expected: 0 instead of 1' ('read returned less than expected: 0 instead of 1')
+The source is unclear. Restarting the computer seems to fix it.
+
 Author: Jacob Feder
 """
 from typing import Dict
