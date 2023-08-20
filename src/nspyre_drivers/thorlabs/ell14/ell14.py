@@ -8,7 +8,7 @@ import time
 import logging
 import numpy as np
 
-class _Ell14():
+class Ell14():
     
     # dict, of all available commands, structured as {key: ('command', n_write, 'reply', n_read)},
     # where n_write is the number of bytes to be written, and n_read the number of bytes to be read
@@ -27,7 +27,7 @@ class _Ell14():
                         'move_backward'     : ('bw', 0, 'PO', 8),
                         'set_jogstep_size'  : ('sj', 8, 'GJ', 8)}
     
-    def __init__(self, serial, address=0, commands = default_commands, rev_in_pulses = 143360):
+    def __init__(self, port, address=0, commands = default_commands, rev_in_pulses = 143360):
         """
         serial: running serial instance
         
@@ -39,7 +39,7 @@ class _Ell14():
                     
         rev_in_pulses: one full revolution (2pi = 360 degrees) in pulses
         """
-        self.ser = serial
+        self.ser = serial.Serial(port, baudrate=9600, timeout=2)
         self.address = str(address)
         
         self.commands = commands
@@ -113,19 +113,7 @@ class _Ell14():
         returns: long int (4 bytes) 
         """
         return struct.unpack('>l', bytes.fromhex(val_hex))[0]
-        
-
-class Ell14():
-    
-    def __init__(self, port='/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0BJ23I-if00-port0', n_devices=1):
-        
-        self.ser = serial.Serial(port, baudrate=9600, timeout=2)
-        
-        self.dev = {}
-        
-        for i in range(n_devices):
-            self.dev[i] = _Ell14(self.ser, address=i)
-            
+          
     def __del__(self):
         self.ser.close()
         
@@ -142,20 +130,19 @@ if __name__ == '__main__':
     # enable logging to console
     logging.basicConfig(level=logging.DEBUG, format='%(asctime)s.%(msecs)03d [%(levelname)8s] %(message)s', datefmt='%m-%d-%Y %H:%M:%S')
 
-    with Ell14(port='/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0BJ23I-if00-port0', n_devices=1) as ell14:
-        print("connected devices: ",ell14.dev)
+    with Ell14(port='/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DK0BJ23I-if00-port0') as ell14:
         print("possible commands are: ")
-        print(ell14.dev[0].commands.keys())
+        print(ell14.commands.keys())
         print("returns tuple of (commandbytestring, reply in pulses (steps), reply in degrees)")
-        print("move to 45 deg (absolute): ", ell14.dev[0].write('move_absolute', 45))
-        print("get position: ", ell14.dev[0].write('get_position'))
-        print("move to home: ", ell14.dev[0].write('move_to_home_cw'))
+        print("move to 45 deg (absolute): ", ell14.write('move_absolute', 45))
+        print("get position: ", ell14.write('get_position'))
+        print("move to home: ", ell14.write('move_to_home_cw'))
         degs = np.linspace(0,355,72)
         moved_degs = []
         time.sleep(5)
         for deg in degs:
             print(deg)
-            a, b, c = ell14.dev[0].write('move_absolute', deg)
+            a, b, c = ell14.write('move_absolute', deg)
             moved_degs.append(c)
             time.sleep(0.25)
         print(moved_degs)
