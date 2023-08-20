@@ -32,7 +32,7 @@ class Ell14Widget(QtWidgets.QWidget):
         self.abs_pos_spinbox = SpinBox(value=488, siPrefix=True, bounds=(400, 1100), dec=True, minStep=5)
         self.abs_pos_spinbox.sigValueChanged.connect(lambda spinbox: self.ell14.write('move_absolute', spinbox.value()))
         self.abs_pos_spinbox.sigValueChanged.connect(self.update_position)
-        self.corr_wave_spinbox.setValue(value=0)
+        self.abs_pos_spinbox.setValue(value=0)
         layout.addWidget(self.abs_pos_spinbox, layout_row, 1)
         layout_row += 1
 
@@ -44,7 +44,7 @@ class Ell14Widget(QtWidgets.QWidget):
 
         # position label
         self.position_label = QtWidgets.QLabel('')
-        self.update_power()
+        self.update_position()
         layout.addWidget(self.position_label, layout_row, 1)
         # get power button
         self.get_position_button = QtWidgets.QPushButton('Get position (degrees)')
@@ -61,4 +61,4 @@ class Ell14Widget(QtWidgets.QWidget):
 
     def update_position(self):
         """Query the laser for the current state then update the state text box."""
-        self.power_label.setText(str(self.ell14.write('get_position'))
+        self.position_label.setText(str(self.ell14.write('get_position')))
