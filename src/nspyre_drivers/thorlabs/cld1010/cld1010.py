@@ -57,14 +57,14 @@ class CLD1010:
     def set_ld_state(self, value):
         self.laser.write(f'OUTP1:STAT {value}')
 
-    def max_current(self):
+    def get_max_current(self):
         return float(self.laser.query('SOUR:CURR:LIM:AMPL?'))
 
-    def set_max_current_setpoint(self, value):
+    def set_max_current(self, value):
         if value <= self.max_diode_current:
             self.laser.write(f'SOUR:CURR:LIM:AMPL {value:.5f}')
         else:
-            raise ValueError(f'Current setpoint: [{value}] is larger than max diode current [{self.max_diode_current}])')
+            raise ValueError(f'Current setpoint: [{value}] is larger than max diode current [{self.max_diode_current}]).')
 
     def meas_current(self):
         return float(self.laser.query('MEAS:CURR?'))
@@ -73,11 +73,11 @@ class CLD1010:
         return float(self.laser.query('SOUR:CURR?'))
 
     def set_current_setpoint(self, value):
-        max_current = self.max_current()
+        max_current = self.get_max_current()
         if value <= max_current:
             self.laser.write(f'SOUR:CURR {value:.5f}')
         else:
-            raise ValueError(f'Current setpoint: [{value}] is larger than max current [{max_current}])')
+            raise ValueError(f'Current setpoint: [{value}] is larger than max current [{max_current}]).')
 
     def get_tec_state(self):
         return self.laser.query('OUTP2:STAT?')
