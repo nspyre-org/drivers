@@ -13,13 +13,15 @@ from pyvisa import ResourceManager
 logger = logging.getLogger(__name__)
 
 class CLD1010:
-    def __init__(self, address):
+    def __init__(self, address, max_diode_current):
         """
         Args:
             address: PyVISA resource path.
+            max_diode_current: Max current of the diode installed in the CLD1010.
         """
         self.rm = ResourceManager('@py')
         self.address = address
+        self.max_diode_current = max_diode_current
 
     def __enter__(self):
         self.open()
@@ -58,6 +60,12 @@ class CLD1010:
     def max_current(self):
         return float(self.laser.query('SOUR:CURR:LIM:AMPL?'))
 
+    def set_max_current_setpoint(self, value):
+        if value <= self.max_diode_current:
+            self.laser.write(f'SOUR:CURR:LIM:AMPL {value:.5f}')
+        else:
+            raise ValueError(f'Current setpoint: [{value}] is larger than max diode current [{self.max_diode_current}])')
+
     def meas_current(self):
         return float(self.laser.query('MEAS:CURR?'))
 
@@ -84,7 +92,7 @@ class CLD1010:
         if self.get_tec_state():
             self.set_ld_state(1)
         else:
-            return("error: temperature controller not on")
+            return('Error: temperature controller disabled.')
 
     def get_modulation_state(self):
         value = int(self.laser.query('SOUR:AM:STAT?'))
