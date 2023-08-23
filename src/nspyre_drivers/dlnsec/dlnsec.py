@@ -95,13 +95,23 @@ class DLnsec():
 
         return response
 
-    def power(self, p):
+    def set_power(self, p):
         """Set the output power (integer percentage)"""
         if not isinstance(p, int) or p > 100 or p < 0:
             raise ValueError(f'The power [{p}] must be an integer between 0-100.')
         self._send(f'PWR{p}')
         _logger.info(f'Setting {self} power to [{p}%].')
 
+    def get_power(self):
+        """Get the output power (integer percentage)"""
+        _logger.info(f'Getting {self} power in %')
+        return self._query(f'PWR?')
+
+    def get_error(self):
+        """Getting error"""
+        err = self._query(f'ERR?')
+        _logger.info(f'Checking for error in {self}. Error response is: {err}.')
+        
     def cw_mode(self):
         """Put the laser into CW mode. This isn't a real CW mode, because a low
         on the trigger input will still turn the lasing off."""

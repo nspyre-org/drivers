@@ -36,30 +36,37 @@ class DLnsecWidget(QtWidgets.QWidget):
         layout_row += 1
 
         # button to put the laser in CW mode
-        self.on_button = QtWidgets.QPushButton('CW')
-        self.on_button.clicked.connect(lambda: self.laser.cw_mode())
-        layout.addWidget(self.on_button, layout_row, 0)
+        self.cw_button = QtWidgets.QPushButton('CW')
+        self.cw_button.clicked.connect(lambda: self.laser.cw_mode())
+        layout.addWidget(self.cw_button, layout_row, 0)
 
         # button to put the laser in external trigger mode
-        self.on_button = QtWidgets.QPushButton('Trig')
-        self.on_button.clicked.connect(lambda: self.laser.trig_mode())
-        layout.addWidget(self.on_button, layout_row, 1)
+        self.trig_button = QtWidgets.QPushButton('Trig')
+        self.trig_button.clicked.connect(lambda: self.laser.trig_mode())
+        layout.addWidget(self.trig_button, layout_row, 1)
         layout_row += 1
 
+        # power label
+        layout.addWidget(QtWidgets.QLabel('Current Power:'), layout_row, 0)
+        self.power_label = QtWidgets.QLabel('')
+        self.update_power()
+        layout.addWidget(self.power_label, layout_row, 1)
+        layout_row += 1
         # power spinbox
         layout.addWidget(QtWidgets.QLabel('Power (0-100)%'), layout_row, 0)
         self.power_spinbox = SpinBox(value=0, siPrefix=False, bounds=(0, 100), int=True)
         def set_power(spinbox):
-            self.laser.power(int(spinbox.value()))
+            self.laser.set_power(int(spinbox.value()))
+            self.update_power()
         self.power_spinbox.sigValueChanged.connect(set_power)
         self.power_spinbox.setValue(value=0)
         layout.addWidget(self.power_spinbox, layout_row, 1)
         layout_row += 1
 
         # button to reboot the laser
-        self.on_button = QtWidgets.QPushButton('Reboot')
-        self.on_button.clicked.connect(lambda: self.laser.reboot())
-        layout.addWidget(self.on_button, layout_row, 1)
+        self.reboot_button = QtWidgets.QPushButton('Reboot')
+        self.reboot_button.clicked.connect(lambda: self.laser.reboot())
+        layout.addWidget(self.reboot_button, layout_row, 1)
         layout_row += 1
 
         # take up any additional space in the final column with padding
@@ -68,3 +75,7 @@ class DLnsecWidget(QtWidgets.QWidget):
         layout.setRowStretch(layout_row, 1)
 
         self.setLayout(layout)
+
+    def update_power(self):
+        """Query the laser for the current state then update the state text box."""
+        self.power_label.setText(str(self.laser.get_power()))
