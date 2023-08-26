@@ -104,8 +104,9 @@ class DLnsec():
 
     def get_power(self):
         """Get the output power (integer percentage)"""
-        _logger.info(f'Getting {self} power in %')
-        return self._query(f'PWR?')
+        p = int(self._query(f'PWR?'))
+        _logger.info(f'Got {self} power [{p}%]')
+        return p
 
     def get_error(self):
         """Getting error"""

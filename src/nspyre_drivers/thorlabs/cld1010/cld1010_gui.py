@@ -41,10 +41,12 @@ class CLD1010Widget(QtWidgets.QWidget):
 
         # current setpoint label
         layout.addWidget(QtWidgets.QLabel('Current Setpoint'), layout_row, 0)
+
         # current setpoint spinbox
         self.current_setpoint_spinbox = SpinBox(value=1e-3, suffix='A', siPrefix=True, bounds=(0, 110), dec=True)    
         self.current_setpoint_spinbox.setMinimumWidth(100)
         layout.addWidget(self.current_setpoint_spinbox, layout_row, 2)
+
         # current setpoint get button
         current_setpoint_get_button = QtWidgets.QPushButton('Get')
         def get_current_setpoint(button):
@@ -52,6 +54,7 @@ class CLD1010Widget(QtWidgets.QWidget):
         get_current_setpoint(None)
         current_setpoint_get_button.clicked.connect(get_current_setpoint)
         layout.addWidget(current_setpoint_get_button, layout_row, 1)
+
         # current setpoint set button
         current_setpoint_set_button = QtWidgets.QPushButton('Set')
         def set_current_setpoint(button):
@@ -67,6 +70,7 @@ class CLD1010Widget(QtWidgets.QWidget):
         self.max_current_spinbox = SpinBox(value=1e-3, suffix='A', siPrefix=True, bounds=(0, 110), dec=True)    
         self.max_current_spinbox.setMinimumWidth(100)
         layout.addWidget(self.max_current_spinbox, layout_row, 2)
+
         # max current get button
         max_current_get_button = QtWidgets.QPushButton('Get')
         def get_max_current(button):
@@ -74,6 +78,7 @@ class CLD1010Widget(QtWidgets.QWidget):
         get_max_current(None)
         max_current_get_button.clicked.connect(get_max_current)
         layout.addWidget(max_current_get_button, layout_row, 1)
+
         # max current set button
         max_current_set_button = QtWidgets.QPushButton('Set')
         def set_max_current(button):
@@ -85,10 +90,11 @@ class CLD1010Widget(QtWidgets.QWidget):
 
         # modulation label
         layout.addWidget(QtWidgets.QLabel('Modulation'), layout_row, 0)
+
         # modulation combobox
         self.modulation_dropdown = QtWidgets.QComboBox()
-        self.modulation_dropdown.addItem('Off') # index 0
-        self.modulation_dropdown.addItem('On') # index 1
+        self.modulation_dropdown.addItem('CW') # index 0
+        self.modulation_dropdown.addItem('Ext') # index 1
         def get_modulation(button):
             """Query the laser for the current modulation state then update the state combo box."""
             if self.laser.get_modulation_state() == 'Off':
@@ -97,10 +103,12 @@ class CLD1010Widget(QtWidgets.QWidget):
                 self.modulation_dropdown.setCurrentIndex(1)
         get_modulation(None)
         layout.addWidget(self.modulation_dropdown, layout_row, 2)
+
         # modulation get button
         modulation_get_button = QtWidgets.QPushButton('Get')
         modulation_get_button.clicked.connect(get_modulation)
         layout.addWidget(modulation_get_button, layout_row, 1)
+
         # modulation set button
         modulation_set_button = QtWidgets.QPushButton('Set')
         def set_modulation(button):

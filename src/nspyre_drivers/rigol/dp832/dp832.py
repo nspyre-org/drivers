@@ -22,8 +22,6 @@ class DP832:
         Args:
             address: PyVISA resource path.
         """
-        # time to wait (s) after each command
-        self.delay = 0.01
         self.rm = ResourceManager('@py')
         self.address = address
 
@@ -75,7 +73,23 @@ class DP832:
         if standard_event_reg & 16:
             raise RuntimeError(f'{self} command [{cmd}] execution error.')
 
-    def toggle_output(self, ch: int, state: bool):
+    def get_output_state(self, ch: int) -> bool:
+        """Get whether the channel output is turned on or off.
+
+        Args:
+            ch: Output channel (e.g. 1, 2, 3).
+        """
+        state = self.device.query(f':OUTP? CH{ch}').strip()
+        _logger.info(f'{self} ch [{ch}] output state [{state}].')
+
+        if state == 'ON':
+            return True
+        elif state == 'OFF':
+            return False
+        else:
+            raise RuntimeError('Unrecognized channel state.')
+
+    def set_output_state(self, ch: int, state: bool):
         """Turn the channel output on or off.
 
         Args:
@@ -83,9 +97,22 @@ class DP832:
             state: True to enable the channel, False to disable.
         """
         if state:
-            self._send_cmd(f':OUTP CH{ch},ON')
+            state_str = 'ON'
         else:
-            self._send_cmd(f':OUTP CH{ch},OFF')
+            state_str = 'OFF'
+
+        self._send_cmd(f':OUTP CH{ch},{state_str}')
+        _logger.info(f'{self} ch [{ch}] set output [{state_str}].')
+
+    def get_voltage(self, ch: int) -> float:
+        """Get the voltage setpoint.
+        
+        Args:
+            ch: Output channel (e.g. 1, 2, 3).
+        """
+        v = float(self.device.query(f':SOUR{ch}:VOLT?'))
+        _logger.info(f'{self} ch [{ch}] voltage setpoint [{v} V].')
+        return v
 
     def set_voltage(self, ch: int, val: float, confirm: bool = True, timeout: float = 2.0, delta: float = 0.03):
         """Set the voltage.
@@ -99,7 +126,7 @@ class DP832:
             delta: Acceptable delta from set voltage (volts).
         """
         self._send_cmd(f':SOUR{ch}:VOLT {val}')
-        _logger.info(f'Setting {self} ch [{ch}] to [{val} V].')
+        _logger.info(f'Setting {self} ch [{ch}] voltage to [{val} V].')
         if confirm:
             timeout = time.time() + timeout
             actual = self.measure_voltage(ch=ch)
@@ -110,13 +137,15 @@ class DP832:
                 actual = self.measure_voltage(ch=ch)
             _logger.info(f'{self} ch [{ch}] reached setpoint [{val} V].')
 
-    def get_voltage(self, ch: int) -> float:
-        """Get the voltage setpoint.
+    def get_current(self, ch: int) -> float:
+        """Get the current setpoint.
         
         Args:
-            ch: output channel (e.g. 1, 2, 3)
+            ch: Output channel (e.g. 1, 2, 3).
         """
-        return float(self.device.query(f':SOUR{ch}:VOLT?'))
+        a = float(self.device.query(f':SOUR{ch}:CURR?'))
+        _logger.info(f'{self} ch [{ch}] current setpoint [{a} A].')
+        return a
 
     def set_current(self, ch: int, val: float, confirm: bool = True, timeout: float = 1.0, delta: float = 0.02):
         """Set the channel current.
@@ -130,7 +159,7 @@ class DP832:
             delta: acceptable delta from set current (amps)
         """
         self._send_cmd(f':SOUR{ch}:CURR {val}')
-        _logger.info(f'Setting {self} ch [{ch}] to [{val} A].')
+        _logger.info(f'Setting {self} ch [{ch}] current to [{val} A].')
 
         if confirm:
             timeout = time.time() + timeout
@@ -142,22 +171,14 @@ class DP832:
                 actual = self.measure_current(ch=ch)
             _logger.info(f'{self} ch [{ch}] reached setpoint [{val} A].')
 
-    def get_current(self, ch: int):
-        """Get the current setpoint.
-        
-        Args:
-            ch: output channel (e.g. 1, 2, 3)
-        """
-        return float(self.device.query(f':SOUR{ch}:CURR?'))
-
-    def get_ovp_alarm(self, ch: int) -> True:
+    def get_ovp_alarm(self, ch: int) -> bool:
         """Return whether there was an over-voltage protection event.
 
         Args:
             ch: Output channel (e.g. 1, 2, 3).
         """
         alarm = self.device.query(f':OUTP:OVP:ALAR? CH{ch}').strip()
-        _logger.debug(f'{self} ch [{ch}] OVP alarm status [{alarm}].')
+        _logger.info(f'{self} ch [{ch}] OVP alarm status [{alarm}].')
         if alarm == 'YES':
             return True
         elif alarm == 'NO':
@@ -165,7 +186,7 @@ class DP832:
         else:
             raise RuntimeError(f'Unrecognized response to OVP alarm status query [{alarm}].')
 
-    def clear_ovp_alarm(self, ch: int) -> True:
+    def clear_ovp_alarm(self, ch: int):
         """Clear the over-voltage protection event.
 
         Args:
@@ -174,8 +195,18 @@ class DP832:
         self._send_cmd(f':OUTP:OVP:CLEAR CH{ch}')
         _logger.info(f'{self} ch [{ch}] cleared OVP alarm.')
 
+    def get_ovp(self, ch: int) -> float:
+        """Get the channel over-voltage protection value.
+
+        Args:
+            ch: Output channel (e.g. 1, 2, 3).
+        """
+        v = float(self.device.query(f':OUTP:OVP:VAL? CH{ch}'))
+        _logger.info(f'{self} ch [{ch}] OVP [{v} V].')
+        return v
+
     def set_ovp(self, ch: int, val: float):
-        """Set the channel over-voltage protection.
+        """Set the channel over-voltage protection value.
 
         Args:
             ch: Output channel (e.g. 1, 2, 3).
@@ -184,7 +215,23 @@ class DP832:
         self._send_cmd(f':OUTP:OVP:VAL CH{ch},{val}')
         _logger.info(f'{self} ch [{ch}] set OVP [{val} V].')
 
-    def toggle_ovp(self, ch: int, state: bool):
+    def get_ovp_state(self, ch: int) -> bool:
+        """Get whether the channel over-voltage protection is turned on or off.
+
+        Args:
+            ch: Output channel (e.g. 1, 2, 3).
+        """
+        state = self.device.query(f':OUTP:OVP? CH{ch}').strip()
+        _logger.info(f'{self} ch [{ch}] ovp state [{state}].')
+
+        if state == 'ON':
+            return True
+        elif state == 'OFF':
+            return False
+        else:
+            raise RuntimeError('Unrecognized OVP state.')
+
+    def set_ovp_state(self, ch: int, state: bool):
         """Enable or disable the channel over-voltage protection.
 
         Args:
@@ -192,11 +239,12 @@ class DP832:
             state: True to enable the OVP, False to disable.
         """
         if state:
-            self._send_cmd(f':OUTP:OVP CH{ch},ON')
-            _logger.info(f'{self} ch [{ch}] set OVP ON.')
+            state_str = 'ON'
         else:
-            self._send_cmd(f':OUTP:OVP CH{ch},FF')
-            _logger.info(f'{self} ch [{ch}] set OVP OFF.')
+            state_str = 'OFF'
+
+        self._send_cmd(f':OUTP:OVP CH{ch},{state_str}')
+        _logger.info(f'{self} ch [{ch}] set OVP [{state_str}].')
 
     def get_ocp_alarm(self, ch: int) -> True:
         """Return whether there was an over-current protection event.
@@ -205,7 +253,7 @@ class DP832:
             ch: Output channel (e.g. 1, 2, 3).
         """
         alarm = self.device.query(f':OUTP:OCP:ALAR? CH{ch}').strip()
-        _logger.debug(f'{self} ch [{ch}] OCP alarm status [{alarm}].')
+        _logger.info(f'{self} ch [{ch}] OCP alarm status [{alarm}].')
         if alarm == 'YES':
             return True
         elif alarm == 'NO':
@@ -222,6 +270,16 @@ class DP832:
         self._send_cmd(f':OUTP:OCP:CLEAR CH{ch}')
         _logger.info(f'{self} ch [{ch}] cleared OCP alarm.')
 
+    def get_ocp(self, ch: int) -> float:
+        """Get the channel over-current protection value.
+
+        Args:
+            ch: Output channel (e.g. 1, 2, 3).
+        """
+        a = float(self.device.query(f':OUTP:OCP:VAL? CH{ch}'))
+        _logger.info(f'{self} ch [{ch}] OCP [{a} A].')
+        return a
+
     def set_ocp(self, ch: int, val: float):
         """Set the channel over-current protection.
 
@@ -232,7 +290,23 @@ class DP832:
         self._send_cmd(f':OUTP:OCP:VAL CH{ch},{val}')
         _logger.info(f'{self} ch [{ch}] set OCP [{val} A].')
 
-    def toggle_ocp(self, ch: int, state: bool):
+    def get_ocp_state(self, ch: int) -> bool:
+        """Get whether the channel over-current protection is turned on or off.
+
+        Args:
+            ch: Output channel (e.g. 1, 2, 3).
+        """
+        state = self.device.query(f':OUTP:OCP? CH{ch}').strip()
+        _logger.info(f'{self} ch [{ch}] ocp state [{state}].')
+
+        if state == 'ON':
+            return True
+        elif state == 'OFF':
+            return False
+        else:
+            raise RuntimeError('Unrecognized OCP state.')
+
+    def set_ocp_state(self, ch: int, state: bool):
         """Enable or disable the channel over-current protection.
 
         Args:
@@ -240,11 +314,12 @@ class DP832:
             state: True to enable the OCP, False to disable.
         """
         if state:
-            self._send_cmd(f':OUTP:OCP CH{ch},ON')
-            _logger.info(f'{self} ch [{ch}] set OCP ON.')
+            state_str = 'ON'
         else:
-            self._send_cmd(f':OUTP:OCP CH{ch},OFF')
-            _logger.info(f'{self} ch [{ch}] set OCP OFF.')
+            state_str = 'OFF'
+
+        self._send_cmd(f':OUTP:OCP CH{ch},{state_str}')
+        _logger.info(f'{self} ch [{ch}] set OCP [{state_str}].')
 
     def measure_voltage(self, ch: int) -> float:
         """Return the actual channel voltage.
@@ -256,8 +331,7 @@ class DP832:
             Channel voltage.
         """
         volt = float(self.device.query(f':MEAS:VOLT? CH{ch}'))
-        _logger.debug(f'{self} ch [{ch}] measured voltage [{volt}].')
-        time.sleep(self.delay)
+        _logger.info(f'{self} ch [{ch}] measured voltage [{volt}].')
         return volt
 
     def measure_current(self, ch: int) -> float:
@@ -270,7 +344,6 @@ class DP832:
             Channel current. 
         """
         curr = float(self.device.query(f':MEAS:CURR? CH{ch}'))
-        time.sleep(self.delay)
         return curr
 
     def measure_power(self, ch: int) -> float:
@@ -283,5 +356,4 @@ class DP832:
             Channel power.
         """
         power = float(self.device.query(f':MEAS:POWE? CH{ch}'))
-        time.sleep(self.delay)
         return power
