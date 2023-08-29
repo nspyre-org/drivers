@@ -80,7 +80,7 @@ class DP832:
             ch: Output channel (e.g. 1, 2, 3).
         """
         state = self.device.query(f':OUTP? CH{ch}').strip()
-        _logger.info(f'{self} ch [{ch}] output state [{state}].')
+        _logger.info(f'{self} ch [{ch}] output state is [{state}].')
 
         if state == 'ON':
             return True
@@ -102,6 +102,11 @@ class DP832:
             state_str = 'OFF'
 
         self._send_cmd(f':OUTP CH{ch},{state_str}')
+
+        # check if the command succeeded
+        if self.get_output_state(ch) != state:
+            raise RuntimeError(f'Failed setting output state to [{state}]')
+
         _logger.info(f'{self} ch [{ch}] set output [{state_str}].')
 
     def get_voltage(self, ch: int) -> float:
@@ -111,7 +116,7 @@ class DP832:
             ch: Output channel (e.g. 1, 2, 3).
         """
         v = float(self.device.query(f':SOUR{ch}:VOLT?'))
-        _logger.info(f'{self} ch [{ch}] voltage setpoint [{v} V].')
+        _logger.info(f'{self} ch [{ch}] voltage setpoint is [{v} V].')
         return v
 
     def set_voltage(self, ch: int, val: float, confirm: bool = True, timeout: float = 2.0, delta: float = 0.03):
@@ -178,7 +183,7 @@ class DP832:
             ch: Output channel (e.g. 1, 2, 3).
         """
         alarm = self.device.query(f':OUTP:OVP:ALAR? CH{ch}').strip()
-        _logger.info(f'{self} ch [{ch}] OVP alarm status [{alarm}].')
+        _logger.info(f'{self} ch [{ch}] OVP alarm status is [{alarm}].')
         if alarm == 'YES':
             return True
         elif alarm == 'NO':
@@ -202,7 +207,7 @@ class DP832:
             ch: Output channel (e.g. 1, 2, 3).
         """
         v = float(self.device.query(f':OUTP:OVP:VAL? CH{ch}'))
-        _logger.info(f'{self} ch [{ch}] OVP [{v} V].')
+        _logger.info(f'{self} ch [{ch}] OVP is [{v} V].')
         return v
 
     def set_ovp(self, ch: int, val: float):
@@ -213,6 +218,11 @@ class DP832:
             val: Channel OVP limit.
         """
         self._send_cmd(f':OUTP:OVP:VAL CH{ch},{val}')
+
+        # check if the command succeeded
+        if self.get_ovp(ch) != val:
+            raise RuntimeError(f'Failed setting ovp to [{val}]')
+
         _logger.info(f'{self} ch [{ch}] set OVP [{val} V].')
 
     def get_ovp_state(self, ch: int) -> bool:
@@ -222,7 +232,7 @@ class DP832:
             ch: Output channel (e.g. 1, 2, 3).
         """
         state = self.device.query(f':OUTP:OVP? CH{ch}').strip()
-        _logger.info(f'{self} ch [{ch}] ovp state [{state}].')
+        _logger.info(f'{self} ch [{ch}] ovp state is [{state}].')
 
         if state == 'ON':
             return True
@@ -253,7 +263,7 @@ class DP832:
             ch: Output channel (e.g. 1, 2, 3).
         """
         alarm = self.device.query(f':OUTP:OCP:ALAR? CH{ch}').strip()
-        _logger.info(f'{self} ch [{ch}] OCP alarm status [{alarm}].')
+        _logger.info(f'{self} ch [{ch}] OCP alarm status is [{alarm}].')
         if alarm == 'YES':
             return True
         elif alarm == 'NO':
@@ -277,7 +287,7 @@ class DP832:
             ch: Output channel (e.g. 1, 2, 3).
         """
         a = float(self.device.query(f':OUTP:OCP:VAL? CH{ch}'))
-        _logger.info(f'{self} ch [{ch}] OCP [{a} A].')
+        _logger.info(f'{self} ch [{ch}] OCP is [{a} A].')
         return a
 
     def set_ocp(self, ch: int, val: float):
@@ -297,7 +307,7 @@ class DP832:
             ch: Output channel (e.g. 1, 2, 3).
         """
         state = self.device.query(f':OUTP:OCP? CH{ch}').strip()
-        _logger.info(f'{self} ch [{ch}] ocp state [{state}].')
+        _logger.info(f'{self} ch [{ch}] ocp state is [{state}].')
 
         if state == 'ON':
             return True
@@ -331,7 +341,7 @@ class DP832:
             Channel voltage.
         """
         volt = float(self.device.query(f':MEAS:VOLT? CH{ch}'))
-        _logger.info(f'{self} ch [{ch}] measured voltage [{volt}].')
+        _logger.info(f'{self} ch [{ch}] measured voltage is [{volt}].')
         return volt
 
     def measure_current(self, ch: int) -> float:
