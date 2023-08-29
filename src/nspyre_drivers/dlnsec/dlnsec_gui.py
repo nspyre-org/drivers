@@ -49,9 +49,6 @@ class DLnsecWidget(QtWidgets.QWidget):
         # power spinbox
         layout.addWidget(QtWidgets.QLabel('Power %'), layout_row, 0)
         self.power_spinbox = SpinBox(value=0, siPrefix=False, bounds=(0, 100), int=True)
-        def set_power(button):
-            self.laser.set_power(int(spinbox.value()))
-        self.power_spinbox.sigValueChanged.connect(set_power)
         self.power_spinbox.setValue(value=0)
         layout.addWidget(self.power_spinbox, layout_row, 2)
 
