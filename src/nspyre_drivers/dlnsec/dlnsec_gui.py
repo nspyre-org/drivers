@@ -34,16 +34,6 @@ class DLnsecWidget(QtWidgets.QWidget):
         on_button.clicked.connect(lambda: self.laser.on())
         layout.addWidget(on_button, layout_row, 1)
 
-        # button to put the laser in CW mode
-        cw_button = QtWidgets.QPushButton('CW')
-        cw_button.clicked.connect(lambda: self.laser.cw_mode())
-        layout.addWidget(cw_button, layout_row, 2)
-
-        # button to put the laser in external trigger mode
-        trig_button = QtWidgets.QPushButton('Trig')
-        trig_button.clicked.connect(lambda: self.laser.trig_mode())
-        layout.addWidget(trig_button, layout_row, 3)
-        
         layout_row += 1
 
         # power spinbox
