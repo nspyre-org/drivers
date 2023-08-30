@@ -64,10 +64,8 @@ class DLnsecWidget(QtWidgets.QWidget):
 
         # modulation combobox
         self.modulation_dropdown = QtWidgets.QComboBox()
-        unknown_modulation_state_text = '?'
         cw_modulation_state_text = 'CW'
         external_trigger_modulation_state_text = 'Ext'
-        self.modulation_dropdown.addItem(unknown_modulation_state_text) # index 0
         self.modulation_dropdown.addItem(cw_modulation_state_text) # index 1
         self.modulation_dropdown.addItem(external_trigger_modulation_state_text) # index 2
         layout.addWidget(self.modulation_dropdown, layout_row, 2)
@@ -83,8 +81,6 @@ class DLnsecWidget(QtWidgets.QWidget):
             else:
                 raise RuntimeError('Modulation mode error.')
 
-            if self.modulation_dropdown.itemText(0) == unknown_modulation_state_text:
-                self.modulation_dropdown.removeItem(0)
         modulation_set_button.clicked.connect(set_modulation)
         layout.addWidget(modulation_set_button, layout_row, 3)
 
