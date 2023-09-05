@@ -97,10 +97,13 @@ class CLD1010Widget(QtWidgets.QWidget):
         self.modulation_dropdown.addItem('Ext') # index 1
         def get_modulation(button):
             """Query the laser for the current modulation state then update the state combo box."""
-            if self.laser.get_modulation_state() == 'Off':
+            state = self.laser.get_modulation_state()
+            if state == 'Off':
                 self.modulation_dropdown.setCurrentIndex(0)
-            if self.laser.get_modulation_state() == 'On':
+            elif state == 'On':
                 self.modulation_dropdown.setCurrentIndex(1)
+            else:
+                raise ValueError(f'Modulation state should be "Off" or "On" but got [{state}].')
         get_modulation(None)
         layout.addWidget(self.modulation_dropdown, layout_row, 2)
 
@@ -112,7 +115,13 @@ class CLD1010Widget(QtWidgets.QWidget):
         # modulation set button
         modulation_set_button = QtWidgets.QPushButton('Set')
         def set_modulation(button):
-            self.laser.set_modulation_state(self.modulation_dropdown.currentText())
+            state = self.modulation_dropdown.currentIndex()
+            if state == 0:
+                self.laser.set_modulation_state('Off')
+            elif state == 1:
+                self.laser.set_modulation_state('On')
+            else:
+                raise ValueError(f'Modulation dropdown should be 0 or 1 but got [{state}]')
         modulation_set_button.clicked.connect(set_modulation)
         layout.addWidget(modulation_set_button, layout_row, 3)
 
