@@ -4,6 +4,9 @@ https://www.digital-loggers.com/222spec.pdf
 
 This is a thin wrapper around the dlipower module that makes the interface a little more convenient.
 
+There is a bug in the dlipower module that causes things to fail if the username isn't "admin".
+https://github.com/dwighthubbard/python-dlipower/issues/45
+
 There is a bug in the dlipower module that causes things to fail after the session times out.
 To increase the session timeout follow the instructions under "Can I set the session timeout longer?"
 http://www.digital-loggers.com/lpcfaqs.html#MakeSessionLonger
@@ -113,14 +116,14 @@ class DLIPDU():
             raise ConnectionError(f'Failed connecting to {self}.')
 
         # gather the current outlet names
-        current_outlets = set()
-        for s in self.switch[:]:
-            current_outlets.add(s.description)
+        current_outlets = {}
+        for i, s in enumerate(self.switch):
+            current_outlets[i+1] = s.description
 
         # check if the outlet names have been set, if not, set up the new outlet names
-        if set(self.config.values()) != current_outlets:
-            for s in self.config:
-                self.switch[s - 1].name = self.config[s]
+        if self.config != current_outlets:
+            for i in self.config:
+                self.switch[i - 1].name = self.config[i]
 
     def set(self, outlet, state, block=True, timeout=TIMEOUT):
         """Set the state of an outlet(s).

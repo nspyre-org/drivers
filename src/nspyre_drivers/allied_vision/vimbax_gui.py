@@ -11,7 +11,6 @@ from threading import Thread
 from threading import Event
 import queue
 import copy
-import pdb
 
 import numpy as np
 from pyqtgraph.Qt import QtGui
@@ -157,14 +156,6 @@ class VimbaXCameraWidget(QtWidgets.QWidget):
             self.mirror_v = not self.mirror_v
         self.mirror_v_button.clicked.connect(mirror_v_image)
         controls_layout.addWidget(self.mirror_v_button)
-
-        # button to turn the acquisition off
-        self.pdb_button = QtWidgets.QPushButton('PDB')
-        def pdb_console(button):
-            nonlocal self
-            pdb.set_trace()
-        self.pdb_button.clicked.connect(pdb_console)
-        controls_layout.addWidget(self.pdb_button)
 
         # exposure time spinbox
         controls_layout.addWidget(QtWidgets.QLabel('Exposure'))

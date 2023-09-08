@@ -65,7 +65,7 @@ class PM100Widget(QtWidgets.QWidget):
 
     def update_power(self):
         """Query the laser for the current state then update the state text box."""
-        self.power_label.setText(str(self.pm.power()))
+        self.power_label.setText(f'{self.pm.power():.3e}')
 
     def update_corr_wave(self):
         self.corr_wave_label.setText(str(self.pm.get_correction_wavelength()))
