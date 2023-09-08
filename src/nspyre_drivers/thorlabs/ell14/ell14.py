@@ -1,5 +1,9 @@
 """
-Copied from https://github.com/MaximilianWinter/RotatorAPI/blob/main/API/RotatorAPI.py
+Copied from: https://github.com/MaximilianWinter/RotatorAPI/blob/main/API/RotatorAPI.py
+
+Part: https://www.thorlabs.com/thorproduct.cfm?partnumber=ELL14
+Communication manual: https://www.thorlabs.com/Software/Elliptec/Communications_Protocol/ELLx%20modules%20protocol%20manual.pdf
+Software manual: https://www.thorlabs.com/drawings/dbf356723d372c3f-2F53ED06-0E67-D3AC-CB56E3121BAA4D80/ELL14-Manual.pdf
 """
 
 import serial
