@@ -103,7 +103,13 @@ class VimbaXCameraWidget(QtWidgets.QWidget):
         self.frame_queue = queue.Queue(maxsize=10)
 
         # top level layout
-        layout = QtWidgets.QHBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
+
+        # ROI
+        self.roi_x = 0
+        self.roi_w = 1
+        self.roi_y = 0
+        self.roi_h = 1
 
         # worker object to queue the camera data
         self.producer_worker = VimbaXFrameProducer(self.cam, self.frame_queue)
@@ -119,63 +125,103 @@ class VimbaXCameraWidget(QtWidgets.QWidget):
         self.thread.start()
 
         # acuisition controls
-        controls_layout = QtWidgets.QVBoxLayout()
+        controls_layout = QtWidgets.QHBoxLayout()
 
         # button to turn the acquisition on
-        self.start_button = QtWidgets.QPushButton('Start')
-        self.start_button.clicked.connect(self.producer_worker.start_acquisition)
-        controls_layout.addWidget(self.start_button)
+        start_button = QtWidgets.QPushButton('Start')
+        start_button.clicked.connect(self.producer_worker.start_acquisition)
+        controls_layout.addWidget(start_button)
 
         # button to turn the acquisition off
-        self.stop_button = QtWidgets.QPushButton('Stop')
+        stop_button = QtWidgets.QPushButton('Stop')
         def stop_producer(button):
             self.producer_worker.stop_acquisition()
-        self.stop_button.clicked.connect(stop_producer)
-        controls_layout.addWidget(self.stop_button)
+        stop_button.clicked.connect(stop_producer)
+        controls_layout.addWidget(stop_button)
 
         # button to rotate the image 90 deg
         self.rot = rot
-        self.rot_button = QtWidgets.QPushButton('Rot')
+        rot_button = QtWidgets.QPushButton('Rot')
         def rot_image(button):
             self.rot = not self.rot
-        self.rot_button.clicked.connect(rot_image)
-        controls_layout.addWidget(self.rot_button)
+        rot_button.clicked.connect(rot_image)
+        controls_layout.addWidget(rot_button)
 
         # button to mirror the image about the horizontal axis
         self.mirror_h = mirror_h
-        self.mirror_h_button = QtWidgets.QPushButton('Mirror H')
+        mirror_h_button = QtWidgets.QPushButton('Mirror H')
         def mirror_h_image(button):
             self.mirror_h = not self.mirror_h
-        self.mirror_h_button.clicked.connect(mirror_h_image)
-        controls_layout.addWidget(self.mirror_h_button)
+        mirror_h_button.clicked.connect(mirror_h_image)
+        controls_layout.addWidget(mirror_h_button)
 
         # button to mirror the image about the vertical axis
         self.mirror_v = mirror_v
-        self.mirror_v_button = QtWidgets.QPushButton('Mirror V')
+        mirror_v_button = QtWidgets.QPushButton('Mirror V')
         def mirror_v_image(button):
             self.mirror_v = not self.mirror_v
-        self.mirror_v_button.clicked.connect(mirror_v_image)
-        controls_layout.addWidget(self.mirror_v_button)
+        mirror_v_button.clicked.connect(mirror_v_image)
+        controls_layout.addWidget(mirror_v_button)
 
         # exposure time spinbox
         controls_layout.addWidget(QtWidgets.QLabel('Exposure'))
-        self.exposure_spinbox = SpinBox(suffix='s', siPrefix=True, bounds=(0, 1000), dec=True, minStep=1e-6)
-        self.exposure_spinbox.setMinimumSize(QtCore.QSize(100, 0))
+        exposure_spinbox = SpinBox(suffix='s', siPrefix=True, bounds=(0, 1000), dec=True, minStep=1e-6)
+        exposure_spinbox.setMinimumSize(QtCore.QSize(100, 0))
         def set_exposure(spinbox):
             self.cam.set_feature('ExposureTime', spinbox.value()*1e6)
-        self.exposure_spinbox.sigValueChanged.connect(set_exposure)
-        self.exposure_spinbox.setValue(exposure)
-        controls_layout.addWidget(self.exposure_spinbox)
+        exposure_spinbox.sigValueChanged.connect(set_exposure)
+        exposure_spinbox.setValue(exposure)
+        controls_layout.addWidget(exposure_spinbox)
 
         # gain spinbox
         controls_layout.addWidget(QtWidgets.QLabel('Gain'))
-        self.gain_spinbox = SpinBox(bounds=(0, 2e16), dec=True, minStep=1e-3)
-        self.gain_spinbox.setMinimumSize(QtCore.QSize(50, 0))
+        gain_spinbox = SpinBox(bounds=(0, 2e16), dec=True, minStep=1e-3)
+        gain_spinbox.setMinimumSize(QtCore.QSize(50, 0))
         def set_gain(spinbox):
             self.cam.set_feature('Gain', spinbox.value())
-        self.gain_spinbox.sigValueChanged.connect(set_gain)
-        self.gain_spinbox.setValue(gain)
-        controls_layout.addWidget(self.gain_spinbox)
+        gain_spinbox.sigValueChanged.connect(set_gain)
+        gain_spinbox.setValue(gain)
+        controls_layout.addWidget(gain_spinbox)
+
+        # ROI x spinbox
+        controls_layout.addWidget(QtWidgets.QLabel('ROI X'))
+        roi_x_spinbox = SpinBox(bounds=(0, 1), dec=True)
+        roi_x_spinbox.setMinimumSize(QtCore.QSize(100, 0))
+        def set_roi_x(spinbox):
+            self.roi_x = spinbox.value()
+        roi_x_spinbox.sigValueChanged.connect(set_roi_x)
+        roi_x_spinbox.setValue(self.roi_x)
+        controls_layout.addWidget(roi_x_spinbox)
+
+        # ROI y spinbox
+        controls_layout.addWidget(QtWidgets.QLabel('ROI Y'))
+        roi_y_spinbox = SpinBox(bounds=(0, 1), dec=True)
+        roi_y_spinbox.setMinimumSize(QtCore.QSize(100, 0))
+        def set_roi_y(spinbox):
+            self.roi_y = spinbox.value()
+        roi_y_spinbox.sigValueChanged.connect(set_roi_y)
+        roi_y_spinbox.setValue(self.roi_y)
+        controls_layout.addWidget(roi_y_spinbox)
+
+        # ROI width spinbox
+        controls_layout.addWidget(QtWidgets.QLabel('ROI Width'))
+        roi_w_spinbox = SpinBox(bounds=(0, 1), dec=True)
+        roi_w_spinbox.setMinimumSize(QtCore.QSize(100, 0))
+        def set_roi_w(spinbox):
+            self.roi_w = spinbox.value()
+        roi_w_spinbox.sigValueChanged.connect(set_roi_w)
+        roi_w_spinbox.setValue(self.roi_w)
+        controls_layout.addWidget(roi_w_spinbox)
+
+        # ROI height spinbox
+        controls_layout.addWidget(QtWidgets.QLabel('ROI Height'))
+        roi_h_spinbox = SpinBox(bounds=(0, 1), dec=True)
+        roi_h_spinbox.setMinimumSize(QtCore.QSize(100, 0))
+        def set_roi_h(spinbox):
+            self.roi_h = spinbox.value()
+        roi_h_spinbox.sigValueChanged.connect(set_roi_h)
+        roi_h_spinbox.setValue(self.roi_h)
+        controls_layout.addWidget(roi_h_spinbox)
 
         controls_layout.addStretch()
         layout.addLayout(controls_layout)
@@ -222,14 +268,26 @@ class VimbaXCameraWidget(QtWidgets.QWidget):
 
         # transpose x,y pixel axes
         img_np = np.transpose(img_np, (1, 0, 2))
+        xpose_width = img_np.shape[1]
+        xpose_height = img_np.shape[0]
+
+        # make sure all the data is in one contiguous block of memory
         img_np = np.ascontiguousarray(img_np)
 
         width = img_np.shape[1]
         height = img_np.shape[0]
+
         # convert from a greyscale numpy array image to QPixmap
         qt_img = QtGui.QImage(img_np.data, width, height, QtGui.QImage.Format.Format_Grayscale8)
+        # crop the image
+        cropped_qt_img = qt_img.copy(
+            int(self.roi_x * xpose_width),
+            int(self.roi_y * xpose_height),
+            int(self.roi_w * xpose_width),
+            int(self.roi_h * xpose_height)
+        )
         # scale to the window size
-        scaled_qt_img = qt_img.scaled(
+        scaled_qt_img = cropped_qt_img.scaled(
             self.image_label.frameGeometry().width(),
             self.image_label.frameGeometry().height(),
             QtCore.Qt.AspectRatioMode.KeepAspectRatio
