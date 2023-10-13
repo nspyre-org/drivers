@@ -105,10 +105,14 @@ class VimbaXCameraWidget(QtWidgets.QWidget):
         # top level layout
         layout = QtWidgets.QVBoxLayout()
 
-        # ROI
-        self.roi_x = 0
+        # region of interest (ROI)
+        # ROI center x coordinate
+        self.roi_x = 0.5
+        # ROI width
         self.roi_w = 1
-        self.roi_y = 0
+        # ROI center x coordinate
+        self.roi_y = 0.5
+        # ROI height
         self.roi_h = 1
 
         # worker object to queue the camera data
@@ -280,11 +284,16 @@ class VimbaXCameraWidget(QtWidgets.QWidget):
         # convert from a greyscale numpy array image to QPixmap
         qt_img = QtGui.QImage(img_np.data, width, height, QtGui.QImage.Format.Format_Grayscale8)
         # crop the image
+        # ROI coordinates (pixels)
+        roi_w_px = int(self.roi_w * xpose_width)
+        roi_h_px = int(self.roi_h * xpose_height)
+        roi_top_left_corner_x = int((self.roi_x - self.roi_w/2) * xpose_width)
+        roi_top_left_corner_y = int((self.roi_y - self.roi_h/2) * xpose_height)
         cropped_qt_img = qt_img.copy(
-            int(self.roi_x * xpose_width),
-            int(self.roi_y * xpose_height),
-            int(self.roi_w * xpose_width),
-            int(self.roi_h * xpose_height)
+            roi_top_left_corner_x,
+            roi_top_left_corner_y,
+            roi_w_px,
+            roi_h_px
         )
         # scale to the window size
         scaled_qt_img = cropped_qt_img.scaled(
