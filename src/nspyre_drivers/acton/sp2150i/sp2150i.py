@@ -127,7 +127,7 @@ class SP2150i():
         return str.replace(' ', '').replace('n', '').replace('m', '')
 
 if __name__ == '__main__':
-    with Spec('/dev/serial/by-id/usb-Acton_Research_ACTON_RESEARCH_CONTROLLER-if00-port0') as spec:
+    with SP2150i('/dev/serial/by-id/usb-Acton_Research_ACTON_RESEARCH_CONTROLLER-if00-port0') as spec:
         print("getting turret")
         print(spec.get_turret())
         print("setting grating 2 - please give this operation at least 20 seconds")
