@@ -29,7 +29,11 @@ We use the Ubuntu's one to compile libTimeTagger.so and so this defines the mini
 
 We ran: conda install -c conda-forge gcc=12.1.0
 
-hello_world.py worked for us.
+python hello_world.py -- worked for us.
+
+* Now test that you can connect to the hardware
+python /usr/lib/timetagger/examples/python/1-Quickstart/2-controlling-the-hardware/A_get_hardware_information.py 
+Also worked for us. You can confirm by seeing the serial number of your time tagger printed out
 
 -----
 Some notes on my first time setting up the time tagger:
