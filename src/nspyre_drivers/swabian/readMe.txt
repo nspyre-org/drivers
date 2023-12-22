@@ -1,23 +1,38 @@
 -----
-I stopped being able to run the file hello_world.py by opening a console, and navigating to /usr/lib/timetagger/examples/python/1-Quickstart and running python3 hello_world.py . However, I can't get this to work from a conda environment. Additionally, Swabian's instructions say to use an ipython shell and run hello_world but still doesn't work.
 
-I am very confused because the following directories all have _TimeTagger.cxx, _TimeTagger.h, TimeTagger.py, and _TimeTagger.so
-* ~/miniconda3/envs/timetagger/lib/python3.10/site-packages 
-* ~/miniconda3/envs/timetagger/lib/python3.1/site-packages
-* ~/miniconda3/envs/timetagger/lib/python3.10
-* ~/miniconda3/envs/timetagger/lib/python3.1
-And the following directory has libTimeTagger.so 
-* ~/miniconda3/envs/timetagger/lib.
+Summary:
 
-This matches that the following directory has _TimeTagger.cxx, _TimeTagger.h, TimeTagger.py, and _TimeTagger.so
-* /usr/lib/python3/dist-packages
-and the following directory has libTimeTagger.so 
-* /usr/lib
+Swabian provided us with Linux installation instructions (https://www.swabianinstruments.com/static/documentation/TimeTagger/sections/installation.html), python examples (/usr/lib/timetagger/examples/python), and the shared object file _TimeTagger.so which can be generated using _TimeTagger.cxx and _TimeTagger.h (in /usr/lib/python3/dist-packages)
+	* NOTE: although not clearly specified in these Linux installation instructions, Swabian suggested using Anaconda, but this is meant only for Windows systems (they are going to improve the documentation in future releases)
+* Create conda environment
+* activate the environment
+* install numpy
+* open python within the environment and run "import sys; print(sys.path)". A list of the directories in sys.path should be printed. In one of the sys.path directories, for instance /home/exodia/.local/lib/python3.10/site-packages, copy the files _TimeTagger.cxx, _TimeTagger.h, TimeTagger.py, and _TimeTagger.so from /usr/lib/python3/dist-packages. 
+* Compile the files. I created file script.sh in the directory I copied the time tagger files with the code from the Linux installation instructions
+PYTHON_FLAGS="`python3-config --includes --libs`"
+NUMPY_FLAGS="-I`python3 -c \"print(__import__('numpy').get_include())\"`"
+TTFLAGS="-I/usr/include/timetagger -lTimeTagger"
+CFLAGS="-std=c++17 -O2 -DNDEBUG -fPIC $PYTHON_FLAGS $NUMPY_FLAGS $TTFLAGS"
 
-I think the problem is when I compiled the .so file I might have needed to use different flags when working with a conda environment. But not totally sure...
+g++ -shared _TimeTagger.cxx $CFLAGS -o _TimeTagger.so
+* Run the script: sudo bash script.sh . You will get some compiler warnings. Ignore them.
+* Go to /usr/lib/timetagger/examples/python/1-Quickstart and run python hello_world.py. 
+* May get an import error like this -- 
+ImportError: /home/exodia/miniconda3/envs/timetagger/bin/../lib/libstdc++.so.6: version `GLIBCXX_3.4.30` not found (required by /home/exodia/miniconda3/envs/timetagger/bin/../lib/libTimeTagger.so) 
+
+From Swabian:
+This message tells that the version of libstdc++.so.6 shipped by Anaconda is older than the one shipped by Ubuntu 22.04.
+This is the main C++ plattform library of the compiler, but luckily it supports great backwards compatibility.
+However Anaconda seems to prefer its own version of this library.
+We use the Ubuntu's one to compile libTimeTagger.so and so this defines the minimum version we require.
+* Use conda to update this library. e.g. https://stackoverflow.com/questions/72540359/glibcxx-3-4-30-not-found-for-librosa-in-conda-virtual-environment-after-tryin explains some steps here. 
+
+We ran: conda install -c conda-forge gcc=12.1.0
+
+hello_world.py worked for us.
 
 -----
-s
+Some notes on my first time setting up the time tagger:
 
 https://www.swabianinstruments.com/static/documentation/TimeTagger/sections/installation.html
 See Linux installation instructions.
@@ -57,5 +72,13 @@ cp /usr/lib/python3/dist-packages/_TimeTagger.so .
 Go to ~/miniconda3/envs/timetagger/lib and cp /usr/lib/libTimeTagger.so .
 ImportError: /home/exodia/miniconda3/envs/timetagger/bin/../lib/libstdc++.so.6: version `GLIBCXX_3.4.30' not found (required by /lib/libTimeTagger.so)
 
+From Swabian:
+This message tells that the version of libstdc++.so.6 shipped by Anaconda is older than the one shipped by Ubuntu 22.04.
+This is the main C++ plattform library of the compiler, but luckily it supports great backwards compatibility.
+However Anaconda seems to prefer its own version of this library.
+We use the Ubuntu's one to compile libTimeTagger.so and so this defines the minimum version we require.
+* Use conda to update this library. e.g. https://stackoverflow.com/questions/72540359/glibcxx-3-4-30-not-found-for-librosa-in-conda-virtual-environment-after-tryin explains some steps here. 
 
+We ran: conda install -c conda-forge gcc=12.1.0
 
+hello_world.py works
