@@ -29,12 +29,12 @@ class CLD1010Widget(QtWidgets.QWidget):
 
         # button to turn the laser off
         self.off_button = QtWidgets.QPushButton('Off')
-        self.off_button.clicked.connect(lambda: self.laser.off())
+        self.off_button.clicked.connect(self.laser_off)
         layout.addWidget(self.off_button, layout_row, 0)
 
         # button to turn the laser on
         self.on_button = QtWidgets.QPushButton('On')
-        self.on_button.clicked.connect(lambda: self.laser.on())
+        self.on_button.clicked.connect(self.laser_on)
         layout.addWidget(self.on_button, layout_row, 1)
 
         layout_row += 1
@@ -126,6 +126,16 @@ class CLD1010Widget(QtWidgets.QWidget):
         layout.addWidget(modulation_set_button, layout_row, 3)
 
         layout_row += 1
+        # state label
+        self.state_label = QtWidgets.QLabel('')
+        self.update_state()
+        layout.addWidget(self.state_label, layout_row, 1)
+        # get state button
+        self.get_state_button = QtWidgets.QPushButton('Get State')
+        self.get_state_button.clicked.connect(self.update_state)
+        layout.addWidget(self.get_state_button, layout_row, 0)
+
+        layout_row += 1
 
         # take up any additional space in the final column with padding
         layout.setColumnStretch(2, 1)
@@ -133,3 +143,20 @@ class CLD1010Widget(QtWidgets.QWidget):
         layout.setRowStretch(layout_row, 1)
 
         self.setLayout(layout)
+
+    def laser_off(self):
+        self.laser.off()
+        self.update_state()
+
+    def laser_on(self): 
+        self.laser.on()
+        self.update_state()
+
+    def update_state(self):
+        """Query the laser for the current state then update the state text box."""
+        state = None
+        if self.laser.get_ld_state():
+            state="On"
+        else:
+            state="Off"
+        self.state_label.setText(state)
