@@ -9,6 +9,7 @@ All rights reserved.
 
 import time
 import logging
+import numpy as np
 
 from pyvisa import ResourceManager
 
@@ -39,7 +40,7 @@ class _DS1000Z:
         except Exception as err:
             raise ConnectionError(f'Failed connecting to DS1000Z @ [{self.address}]') from err
         # 1 second timeout
-        self.device.timeout = 1000
+        self.device.timeout = 5000 #5s
         self.idn = self.device.query('*IDN?').strip()
         _logger.info(f'Connected to DS1000Z [{self}].')
         # see table 1-5
@@ -59,17 +60,28 @@ class _DS1000Z:
         self.device.write('*WAI')
         standard_event_reg = int(self.device.query('*ESR?').strip())
         summary_reg = int(self.device.query('*STB?').strip())
-        questionable_status_reg = int(self.device.query(':STAT:QUES?').strip())
         _logger.debug(f'[{self}] sent command [{cmd}], ESR [{standard_event_reg}],'
-            f' STB [{summary_reg}], QSR [{questionable_status_reg}]')
+            f' STB [{summary_reg}]')
+        #questionable_status_reg = int(self.device.query(':STAT:QUES?').strip())
+        #_logger.debug(f'[{self}] sent command [{cmd}], ESR [{standard_event_reg}],'
+        #    f' STB [{summary_reg}], QSR [{questionable_status_reg}]')
         if standard_event_reg & 32:
             raise RuntimeError(f'DS1000Z [{self}] command [{cmd}] contains a syntax error.')
         if standard_event_reg & 16:
             raise RuntimeError(f'DS1000Z [{self}] command [{cmd}] execution error.')
-            
+
+    def _read_bytes(self, num_bytes):
+        self.device.read_bytes(num_bytes)
+ 
+    def _read_raw(self):
+        return self.device.read_raw()
+
     def _ask(self, cmd):
-        return self.device.query(f':SOUR{ch}:VOLT?')
-        
+        return self.device.query(cmd)
+
+    def _ask_raw(self, cmd):
+        self.device.write(cmd)
+        return self._read_raw()
        
 class DS1000Z(_DS1000Z):
     '''
@@ -91,12 +103,12 @@ class DS1000Z(_DS1000Z):
         # python-usbtmc works with this scope.  The following searches
         # the usbtmc numbers and finds the corresponding usb pid, vid
         # and serial, and then issues a command via the kernel driver.
-        rigol_vid = '0x1ab1'
-        rigol_pid = '0x04ce'
-        usb_id_usbtmc = usbtmc_info()
-        for dev in usb_id_usbtmc:
-            if dev[0] == rigol_vid and dev[1] == rigol_pid:
-                os.system('echo *IDN? >> /dev/%s' % dev[3])
+        #rigol_vid = '0x1ab1'
+        #rigol_pid = '0x04ce'
+        #usb_id_usbtmc = usbtmc_info()
+        #for dev in usb_id_usbtmc:
+        #    if dev[0] == rigol_vid and dev[1] == rigol_pid:
+        #        os.system('echo *IDN? >> /dev/%s' % dev[3])
 
         _DS1000Z.__init__(self, address)
 
@@ -112,22 +124,22 @@ class DS1000Z(_DS1000Z):
         return len(self._channels)
 
     def autoscale(self):
-        self._send_cmd(':aut')
+        self._write(':aut')
 
     def clear(self):
-        self._send_cmd(':clear')
+        self._write(':clear')
 
     def run(self):
-        self._send_cmd(':run')
+        self._write(':run')
 
     def stop(self):
-        self._send_cmd(':stop')
+        self._write(':stop')
 
     def force(self):
-        self._send_cmd(':tfor')
+        self._write(':tfor')
 
     def set_single_shot(self):
-        self._send_cmd(':sing')
+        self._write(':sing')
 
     def get_id(self):
         return self._ask('*IDN?')
@@ -137,23 +149,23 @@ class DS1000Z(_DS1000Z):
 
     def set_averaging(self, count):
         assert count in [2**n for n in range(1, 11)]
-        self._send_cmd(':acq:aver %i' % count)
+        self._write(':acq:aver %i' % count)
         return self.get_averaging()
 
     def set_averaging_mode(self):
-        self._send_cmd(':acq:type aver')
+        self._write(':acq:type aver')
         return self.get_mode()
 
     def set_normal_mode(self):
-        self._send_cmd(':acq:type norm')
+        self._write(':acq:type norm')
         return self.get_mode()
 
     def set_high_resolution_mode(self):
-        self._send_cmd(':acq:type hres')
+        self._write(':acq:type hres')
         return self.get_mode()
 
     def set_peak_mode(self):
-        self._send_cmd(':acq:type peak')
+        self._write(':acq:type peak')
         return self.get_mode()
 
     def get_mode(self):
@@ -163,7 +175,7 @@ class DS1000Z(_DS1000Z):
             'PEAK': 'peak',
             'HRES': 'high_resolution'
         }
-        return modes[self._ask(':acq:type?')]
+        return modes[self._ask(':acq:type?')[:-1]]
 
     def get_sampling_rate(self):
         return float(self._ask(':acq:srat?'))
@@ -213,8 +225,8 @@ class DS1000Z(_DS1000Z):
         Returns:
             list: Raw datastream containing the image data.
         '''
-        self.file.timeout = 0
-        self._send_cmd(':disp:data? on,off,%s' % type)
+        #self.file.timeout = 0
+        #self._write(':disp:data? on,off,%s' % type)
 
         assert type in ('jpeg', 'png', 'bmp8', 'bmp24', 'tiff')
 
@@ -229,7 +241,9 @@ class DS1000Z(_DS1000Z):
         elif type == 'tiff':
             s = 0.5
         time.sleep(s)
-        raw_img = self._read_raw(3850780)[11:-4]
+        #raw_img = self._read_bytes(3850780)[11:-4]
+        raw_img = self._ask_raw(':disp:data? on,off,%s' % type)[11:-4]
+        #raw_img = self._read_raw()[11:-4]
 
         with open(filename, 'wb') as fs:
             fs.write(raw_img)
@@ -372,7 +386,7 @@ class _Rigol1054zChannel:
         last_block_pts = info['points'] % max_num_pts
 
         datas = []
-        for i in tqdm.tqdm(range(num_blocks+1), ncols=60):
+        for i in range(num_blocks+1):
             if i < num_blocks:
                 self._osc._write(':wav:star %i' % (1+i*250000))
                 self._osc._write(':wav:stop %i' % (250000*(i+1)))
@@ -385,7 +399,6 @@ class _Rigol1054zChannel:
             data = self._osc._ask_raw(':wav:data?')[11:]
             data = np.frombuffer(data, 'B')
             datas.append(data)
-
         datas = np.concatenate(datas)
         v = (datas - info['yorigin'] - info['yreference']) * info['yincrement']
 
@@ -419,6 +432,9 @@ class _Rigol1054zTrigger:
         self._osc._write(':trig:hold %.3e' % holdoff)
         return self.get_trigger_holdoff_s()
 
+    def get_trigger_mode(self):
+        return self._osc._ask(':TRIGger:SWEep?')
+
 class _Rigol1054zTimebase:
     def __init__(self, osc):
         self._osc = osc
@@ -426,13 +442,8 @@ class _Rigol1054zTimebase:
     def _write(self, cmd):
         return self._osc._write(':tim%s' % cmd)
 
-    def _read(self):
-        return self._osc._read()
-
     def _ask(self, cmd):
-        self._write(cmd)
-        r = self._read()
-        return r
+        return self._osc._ask(':tim%s' % cmd)
 
     def get_timebase_scale_s_div(self):
         return float(self._ask(':scal?'))
@@ -465,6 +476,21 @@ if __name__ == '__main__':
     #Connect to DS1000Z
     ip_addrs = "10.120.98.99"
     visa_address = f'TCPIP::{ip_addrs}::INSTR' #maybe need to use TCPIP0::ip_addrs::INSTR
-    ds1000z = DS1000Z(visa_address)
+    with DS1000Z(visa_address) as ds1000z:
+        print(ds1000z)
+        print(ds1000z.trigger.get_trigger_mode())
+        ds1000z.set_single_shot()
+        print(ds1000z.trigger.get_trigger_mode())
+        ds1000z.trigger.set_trigger_level_V(1.5)
+        print(ds1000z.trigger.get_trigger_level_V())
+        ds1000z.trigger.set_trigger_level_V(1)
+        print(ds1000z.trigger.get_trigger_level_V())
+        ds1000z.run()
+        
+        ds1000z.force()
+        print(ds1000z[1].get_data()) #one way of getting data
+        print(ds1000z.timebase.get_timebase_scale_s_div())
+        ds1000z.get_screenshot('/home/ben/Screenshots/test.png')
+
     
     
