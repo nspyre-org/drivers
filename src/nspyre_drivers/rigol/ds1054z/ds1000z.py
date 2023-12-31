@@ -256,15 +256,16 @@ class _Rigol1054zChannel:
         self._osc = osc
 
     def _write(self, cmd):
-        return self._osc._write(':chan%i%s' % (self._channel, cmd))
+        cmd = ':chan%i%s' % (self._channel, cmd)
+        print(cmd)
+        return self._osc._write(cmd)
 
     def _read(self):
         return self._osc._read()
 
     def _ask(self, cmd):
-        self._write(cmd)
-        r = self._read()
-        return r
+        cmd = f":chan{self._channel}{cmd}"
+        return self._osc._ask(cmd)
 
     def get_voltage_rms_V(self):
         return self._osc.ask(':MEAS:ITEM? VRMS,CHAN%i' % self._channel)
@@ -297,11 +298,11 @@ class _Rigol1054zChannel:
         return bool(int(self._ask(':disp?'))) ^ 1
 
     def get_offset_V(self):
-        return float(self._ask(':off?'))
+        return float(self._ask(':OFFS?'))
 
     def set_offset_V(self, offset):
         assert -1000 <= offset <= 1000.
-        self._write(':off %.4e' % offset)
+        self._write(':OFFS %.4e' % offset)
         return self.get_offset_V()
 
     def get_range_V(self):
@@ -315,6 +316,9 @@ class _Rigol1054zChannel:
     def set_vertical_scale_V(self, scale):
         assert 1e-3 <= scale <= 100
         self._write(':scal %.4e' % scale)
+
+    def get_vertical_scale_V(self):
+        return float(self._ask(':scal?'))
 
     def get_probe_ratio(self):
         return float(self._ask(':prob?'))
@@ -435,6 +439,25 @@ class _Rigol1054zTrigger:
     def get_trigger_mode(self):
         return self._osc._ask(':TRIGger:SWEep?')
 
+    def get_trigger_source(self):
+        return self._osc._ask(f":TRIGger:EDGe:SOURce?")
+
+    def set_trigger_source(self, chan):
+        assert chan in [1,2,3,4]
+        self._osc._write(f":TRIGger:EDGe:SOURce CHAN{chan}")
+        return self.get_trigger_source()
+
+    """
+    def set_trigger_mode(self, mode):
+        #assert mode in ["AUTO","NORMal","SINGle", "norm", "singl", "NORM", "SING"] 
+        cmd = f':TRIGger:SWEep {mode}'
+        #cmd = f':{mode}'
+        print(cmd)
+        return self._osc._ask(cmd)
+    """
+
+
+
 class _Rigol1054zTimebase:
     def __init__(self, osc):
         self._osc = osc
@@ -477,16 +500,24 @@ if __name__ == '__main__':
     ip_addrs = "10.120.98.99"
     visa_address = f'TCPIP::{ip_addrs}::INSTR' #maybe need to use TCPIP0::ip_addrs::INSTR
     with DS1000Z(visa_address) as ds1000z:
-        print(ds1000z)
-        print(ds1000z.trigger.get_trigger_mode())
         ds1000z.set_single_shot()
-        print(ds1000z.trigger.get_trigger_mode())
-        ds1000z.trigger.set_trigger_level_V(1.5)
-        print(ds1000z.trigger.get_trigger_level_V())
+        #s1000z.trigger.set_trigger_mode("sing") #"AUTO","NORMal","SINGle",
+        print(f"trigger mode: {ds1000z.trigger.get_trigger_mode()}")
         ds1000z.trigger.set_trigger_level_V(1)
-        print(ds1000z.trigger.get_trigger_level_V())
+        print(f"trigger voltage level: {ds1000z.trigger.get_trigger_level_V()}")
+        ds1000z.trigger.set_trigger_source(4) #1-4
+        print(f"trigger source: {ds1000z.trigger.get_trigger_source()}")
+        ds1000z.timebase.set_timebase_scale_s_div(100e-6) #100us
+        print(f"time per div: {ds1000z.timebase.get_timebase_scale_s_div()}")
+        ds1000z.timebase.set_timebase_offset_s(0)
+        print(f"time offset: {ds1000z.timebase.get_timebase_offset_s()}")
+        for i in [1,2,3,4]:
+            ds1000z[i].set_vertical_scale_V(2.5) #100us
+            print(f"vertical scale: {ds1000z[i].get_vertical_scale_V()}")
+            ds1000z[i].set_offset_V(0)
+            print(f"vertical offset: {ds1000z[i].get_offset_V()}")
+
         ds1000z.run()
-        
         ds1000z.force()
         print(ds1000z[1].get_data()) #one way of getting data
         print(ds1000z.timebase.get_timebase_scale_s_div())
