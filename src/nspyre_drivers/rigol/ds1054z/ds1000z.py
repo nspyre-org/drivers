@@ -514,14 +514,21 @@ if __name__ == '__main__':
         for i in [1,2,3,4]:
             ds1000z[i].set_vertical_scale_V(2.5) #100us
             print(f"vertical scale: {ds1000z[i].get_vertical_scale_V()}")
-            ds1000z[i].set_offset_V(0)
+            ds1000z[i].set_offset_V(-5)
             print(f"vertical offset: {ds1000z[i].get_offset_V()}")
 
         ds1000z.run()
+        time.sleep(3)
         ds1000z.force()
         print(ds1000z[1].get_data()) #one way of getting data
-        print(ds1000z.timebase.get_timebase_scale_s_div())
         ds1000z.get_screenshot('/home/ben/Screenshots/test.png')
-
-    
-    
+"""
+        import matplotlib.pyplot as plt
+        for i in [1,2,3,4]:
+            xs, ys = ds1000z[i].get_data() #one way of getting data
+            plt.plot(xs, ys[:-1], label=f'ch{i}') #for some reason the last data point seems bad
+        ds1000z.get_screenshot('/home/ben/Screenshots/test.png')
+        plt.legend()
+        plt.title('')
+        plt.show()
+"""
