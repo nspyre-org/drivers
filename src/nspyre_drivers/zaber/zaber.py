@@ -48,7 +48,6 @@ class ZaberStages:
     def open(self):
         if self.serial_port is not None:
             self.conn = Connection.open_serial_port(self.serial_port)
-            logger.debug(f'Found {len(device_list)} devices')
         else:
             # detect any connected Zaber serial devices
             zaber_serial_ports = Path('/dev/serial/by-id/').glob('usb-Zaber_Technologies_Inc.*')

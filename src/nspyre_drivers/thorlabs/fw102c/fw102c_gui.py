@@ -13,11 +13,11 @@ from pyqtgraph import SpinBox
 class FW102CWidget(QtWidgets.QWidget):
     """Qt widget for controlling the Thorlabs FW102C filter wheel."""
 
-    def __init__(self, filter_wheel_driver, filter_wheel_channel_mapping):
+    def __init__(self, filter_wheel_driver, channel_mapping):
         """
         Args:
             filter_wheel_driver: The FW102C driver.
-            filter_wheel_channel_mapping: TODO.
+            channel_mapping: See FW102C driver.
         """
         super().__init__()
 
@@ -36,7 +36,7 @@ class FW102CWidget(QtWidgets.QWidget):
         )
         wheel_position_layout.addWidget(position_label)
         filter_wheel_combobox = QtWidgets.QComboBox()
-        for m in filter_wheel_channel_mapping:
+        for m in channel_mapping:
             filter_wheel_combobox.addItem(m)
         filter_wheel_combobox.setCurrentText(self.filter_wheel.position())
         filter_wheel_combobox.currentTextChanged.connect(lambda text: self.filter_wheel.set_position(text))

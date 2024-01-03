@@ -30,6 +30,7 @@ ximea-py = { version = "*", optional = true }
 zaber-motion = { version = "*", optional = true }
 nidaqmx = { version = "*", optional = true }
 pycobolt = { git = "https://github.com/cobolt-lasers/pycobolt.git", optional = true}
+pylablib-lightweight = { version = "*", optional = true, extras = ["devio"] }
 
 [tool.poetry.extras]
 beaglebone = ["requests"]
@@ -39,6 +40,7 @@ oceanoptics = ["seabreeze"]
 ximea = ["ximea-py"]
 zaber = ["zaber-motion"]
 nidaq = ["nidaqmx"]
+kinesis = ["pylablib-lightweight"]
 
 [build-system]
 requires = ["poetry-core"]
