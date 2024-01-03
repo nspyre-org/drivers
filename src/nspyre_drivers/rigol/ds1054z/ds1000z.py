@@ -500,7 +500,6 @@ if __name__ == '__main__':
     ip_addrs = "10.120.98.99"
     visa_address = f'TCPIP::{ip_addrs}::INSTR' #maybe need to use TCPIP0::ip_addrs::INSTR
     with DS1000Z(visa_address) as ds1000z:
-        ds1000z.set_single_shot()
         #s1000z.trigger.set_trigger_mode("sing") #"AUTO","NORMal","SINGle",
         print(f"trigger mode: {ds1000z.trigger.get_trigger_mode()}")
         ds1000z.trigger.set_trigger_level_V(1)
@@ -518,10 +517,11 @@ if __name__ == '__main__':
             print(f"vertical offset: {ds1000z[i].get_offset_V()}")
 
         ds1000z.run()
-        time.sleep(3)
-        ds1000z.force()
-        print(ds1000z[1].get_data()) #one way of getting data
-        ds1000z.get_screenshot('/home/ben/Screenshots/test.png')
+        ds1000z.set_single_shot() #when calling this, will trigger on the very first pulse it gets
+        time.sleep(1)
+        ds1000z.force() #run this so that when getting data there will be data. If already triggered, then this will do nothing
+        print(ds1000z[1].get_data()) #one way of getting data. If oscope doesn't trigger then this will error out
+        ds1000z.get_screenshot('/home/exodia/Pictures/Screenshots/test.png')
 """
         import matplotlib.pyplot as plt
         for i in [1,2,3,4]:
