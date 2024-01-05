@@ -15,8 +15,9 @@ class FW102C:
     def __init__(self, serial_port: str, channel_mapping=None, baud=115200, timeout: float = 10.0):
         """Args:
             serial_port: serial COM port (see pyserial docs)
-            channel_mapping: dictionary mapping an identifier to a channel, which can be used instead of the channel number e.g.
-            {'filter1': 1, 'filter2': 2}
+            channel_mapping: dictionary mapping an identifier to a channel,
+                which can be used instead of the channel number e.g.
+                {'filter1': 1, 'filter2': 2}
             baud: 9600 or 115200
             timeout: read timeout
         """

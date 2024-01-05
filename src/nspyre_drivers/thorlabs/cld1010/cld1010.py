@@ -13,13 +13,15 @@ from pyvisa import ResourceManager
 logger = logging.getLogger(__name__)
 
 class CLD1010:
-    def __init__(self, address):
+    def __init__(self, address, max_diode_current):
         """
         Args:
             address: PyVISA resource path.
+            max_diode_current: Max current of the diode installed in the CLD1010.
         """
         self.rm = ResourceManager('@py')
         self.address = address
+        self.max_diode_current = max_diode_current
 
     def __enter__(self):
         self.open()
@@ -50,13 +52,34 @@ class CLD1010:
         return self.laser.query('*IDN?')
 
     def get_ld_state(self):
-        return int(self.laser.query('OUTP1:STAT?'))
+        """Check if diode is lasing."""
+        if int(self.laser.query('OUTP1:STAT?')):
+            return True
+        else:
+            return False
 
     def set_ld_state(self, value):
         self.laser.write(f'OUTP1:STAT {value}')
 
-    def max_current(self):
+    def get_max_current(self):
         return float(self.laser.query('SOUR:CURR:LIM:AMPL?'))
+
+    def set_max_current(self, value):
+        """Set the maximum laser diode current. This is the setpoint when the laser is enabled in modulation mode."""
+        if value > self.max_diode_current:
+            raise ValueError(f'Current setpoint: [{value}] is larger than max diode current [{self.max_diode_current}]).')
+
+        laser_status = False
+        if self.get_ld_state():
+            laser_status = True
+            # laser is on, so turn it off first
+            self.off()
+
+        self.laser.write(f'SOUR:CURR:LIM:AMPL {value:.5f}')
+
+        # turn the laser back on if it was on before
+        if laser_status:
+            self.on()
 
     def meas_current(self):
         return float(self.laser.query('MEAS:CURR?'))
@@ -65,11 +88,12 @@ class CLD1010:
         return float(self.laser.query('SOUR:CURR?'))
 
     def set_current_setpoint(self, value):
-        max_current = self.max_current()
+        """Set the laser diode current setpoint. This is the setpoint when the laser is disabled in modulation mode."""
+        max_current = self.get_max_current()
         if value <= max_current:
             self.laser.write(f'SOUR:CURR {value:.5f}')
         else:
-            raise ValueError(f'Current setpoint: [{value}] is larger than max current [{max_current}])')
+            raise ValueError(f'Current setpoint: [{value}] is larger than max current [{max_current}]).')
 
     def get_tec_state(self):
         return self.laser.query('OUTP2:STAT?')
@@ -84,7 +108,7 @@ class CLD1010:
         if self.get_tec_state():
             self.set_ld_state(1)
         else:
-            return("error: temperature controller not on")
+            return('Error: temperature controller disabled.')
 
     def get_modulation_state(self):
         value = int(self.laser.query('SOUR:AM:STAT?'))

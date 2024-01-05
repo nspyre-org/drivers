@@ -4,9 +4,31 @@ https://www.digital-loggers.com/222spec.pdf
 
 This is a thin wrapper around the dlipower module that makes the interface a little more convenient.
 
+There is a bug in the dlipower module that causes things to fail if the username isn't "admin".
+https://github.com/dwighthubbard/python-dlipower/issues/45
+
 There is a bug in the dlipower module that causes things to fail after the session times out.
 To increase the session timeout follow the instructions under "Can I set the session timeout longer?"
 http://www.digital-loggers.com/lpcfaqs.html#MakeSessionLonger
+
+Copied here for posterity:
+
+Log into the unit and choose the External APIs link.
+If the REST API is not enabled, check the REST API checkbox and press submit.
+Scroll own to the "Browse the REST API" link Eg: 192.168.0.100/restapi/
+Select the auth (Authentication server object) link
+Select Cookie timeout Eg: http://192.168.0.100/restapi/auth/cookie_timeout/
+
+Enter a time in seconds.
+3600 = 1 hour
+7200 = 2 hours
+86400 = 1 day
+604800 = 1 week
+
+Click the PUT button.
+
+The next time you login, the timeout will take effect.
+
 
 Author: Jacob Feder
 Date: 2/11/2022
@@ -72,6 +94,9 @@ class DLIPDU():
 
         return outlet
 
+    def __str__(self):
+        return f'DLU PDU [{self.hostname}]'
+
     def __enter__(self):
         self.connect()
         return self
@@ -84,15 +109,21 @@ class DLIPDU():
         # TODO connection timeout not working
         self.switch = dlipower.PowerSwitch(hostname=self.hostname, userid=self.userid, password=self.password, retries=self.retries, timeout=self.timeout, **self.kwargs)
 
+        if self.switch.verify():
+            if self.switch.statuslist() is None:
+                raise ConnectionError(f'{self} is accessible but connection still failed. This may be due to an incorrect userid/password.')
+        else:
+            raise ConnectionError(f'Failed connecting to {self}.')
+
         # gather the current outlet names
-        current_outlets = set()
-        for s in self.switch[:]:
-            current_outlets.add(s.description)
+        current_outlets = {}
+        for i, s in enumerate(self.switch):
+            current_outlets[i+1] = s.description
 
         # check if the outlet names have been set, if not, set up the new outlet names
-        if set(self.config.values()) != current_outlets:
-            for s in self.config:
-                self.switch[s - 1].name = self.config[s]
+        if self.config != current_outlets:
+            for i in self.config:
+                self.switch[i - 1].name = self.config[i]
 
     def set(self, outlet, state, block=True, timeout=TIMEOUT):
         """Set the state of an outlet(s).
