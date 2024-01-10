@@ -4,6 +4,10 @@ Copied from: https://github.com/MaximilianWinter/RotatorAPI/blob/main/API/Rotato
 Part: https://www.thorlabs.com/thorproduct.cfm?partnumber=ELL14
 Communication manual: https://www.thorlabs.com/Software/Elliptec/Communications_Protocol/ELLx%20modules%20protocol%20manual.pdf
 Software manual: https://www.thorlabs.com/drawings/dbf356723d372c3f-2F53ED06-0E67-D3AC-CB56E3121BAA4D80/ELL14-Manual.pdf
+
+**NOTE: WHEN DEVICE RESTARTS, IT REVERTS ADDRESS BACK TO DEFAULT ADDRESS UNLESS SAVED USER DATA
+To have multiple devices with different addresses, first power ELL1B, then connect
+first device and change address, saving its user data. Then connect second device and change address, saving its user data, etc.**
 """
 
 import serial
@@ -59,10 +63,9 @@ class Ellx():
         returns: tuple of bytes (command string), string corresponding to a 4 byte hexadecimal number or None, 
         
         """
-        # value must be in degrees
         if key in self.commands.keys():
             command, n_write, reply, n_read = self.commands[key]
-            if val_pulses: # must be 4 bytes
+            if isinstance(val_pulses,(int,float)): # must be 4 bytes
                 byte_string = bytes(self.address + command + val_pulses, 'ascii') 
             else:
                 byte_string = bytes(self.address + command, 'ascii')
@@ -73,7 +76,6 @@ class Ellx():
             
             if read == True:            
                 line = self.ser.readline()
-
                 while (line[0:3] == bytes(self.address + 'GS', 'ascii')) or (line[0:3] == bytes(self.address + reply, 'ascii')):
                     
                     if line[0:3] == bytes(self.address + reply, 'ascii'):
@@ -86,6 +88,35 @@ class Ellx():
             return byte_string, None
         else:
             return None, None
+
+    def save_user_data(self):
+        byte_string = bytes(f'{self.address}us','ascii')
+        self.ser.flushInput()
+        self.ser.write(byte_string)
+
+    def change_address(self, new_address):
+        # address is entered in the range 0-F. The default value is 0.
+        byte_string = bytes(f'{self.address}ca{new_address}','ascii')
+        self.ser.flushInput()
+        self.ser.write(byte_string)
+        self.address = str(new_address)
+
+    def get_information(self):
+        byte_string = bytes(f'{self.address}in','ascii')
+        self.ser.flushInput()
+        self.ser.write(byte_string)
+        line = self.ser.readline()
+        header = line[0:3]
+        assert(header == bytes(f'{self.address}IN','ascii'))
+        model = line[3:5] # model == bytes('06', 'ascii') #Ell6 bi-positional slider
+        sn = line[5:13] #serial number
+        year = line[13:17] #year of manufacturing
+        fw_rel = line[17:19] #firmware release
+        hw_rel = line[19:21] #hardware release
+        travel = line[21:25] #travel mm/deg travel == bytes('001F', 'ascii') #31mm travel
+        pulses_mu = line[25:] #pulses per position
+        print(sn, year, fw_rel, hw_rel, travel, pulses_mu)
+        return model, sn, year, fw_rel, hw_rel, travel, pulses_mu
 
     def __del__(self):
         self.ser.close()

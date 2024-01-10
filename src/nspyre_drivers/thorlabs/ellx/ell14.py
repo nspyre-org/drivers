@@ -11,7 +11,7 @@ import struct
 import time
 import logging
 import numpy as np
-from ellx import Ellx
+from nspyre_drivers.thorlabs.ellx.ellx import Ellx
 
 class Ell14(Ellx):
     
@@ -20,19 +20,7 @@ class Ell14(Ellx):
     # with the respective command
     # all possible commands are listed in https://www.thorlabs.com/Software/Elliptec/Communications_Protocol/ELLx%20modules%20protocol%20manual.pdf
     
-    default_commands = {'get_position'      : ('gp', 0, 'PO', 8),
-                        'get_home_offset'   : ('go', 0, 'HO', 8),
-                        'get_jogstep_size'  : ('gj', 0, 'GJ', 8),
-                        
-                        'move_to_home_cw'   : ('ho0', 0, 'PO', 8), # clockwise
-                        'move_to_home_ccw'  : ('ho1', 0, 'PO', 8), # counter clockwise
-                        'move_absolute'     : ('ma', 8, 'PO', 8),
-                        'move_relative'     : ('mr', 8, 'PO', 8),
-                        'move_forward'      : ('fw', 0, 'PO', 8),
-                        'move_backward'     : ('bw', 0, 'PO', 8),
-                        'set_jogstep_size'  : ('sj', 8, 'GJ', 8)}
-    
-    def __init__(self, port, address=0, commands = default_commands, rev_in_pulses = 143360):
+    def __init__(self, port, address=0, rev_in_pulses = 143360):
         """
         serial: running serial instance
         
@@ -44,7 +32,7 @@ class Ell14(Ellx):
                     
         rev_in_pulses: one full revolution (2pi = 360 degrees) in pulses
         """
-        Ellx.__init__(self, port, address, commands)
+        Ellx.__init__(self, port, address)
         self.rev_in_pulses = rev_in_pulses
         
     def write(self, key,  val_deg = None, read=True):
