@@ -10,7 +10,7 @@ import logging
 
 from pyvisa import ResourceManager
 
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 class CLD1010:
     def __init__(self, address, max_diode_current):
@@ -32,7 +32,7 @@ class CLD1010:
         self.close()
 
     def __str__(self):
-        return f'{self.address} {self.idn}'
+        return f'{self.address} {self.idn.strip()}'
 
     def open(self):
         try:
@@ -42,10 +42,11 @@ class CLD1010:
         # 1 second timeout
         self.laser.timeout = 1000
         self.idn = self.laser.query('*IDN?')
-        logger.info(f'Connected to CLD1010 [{self}].')
+        _logger.info(f'Connected to CLD1010 [{self}].')
         return self
 
     def close(self):
+        _logger.info(f'Disconnected from CLD1010 [{self}].')
         self.laser.close()
 
     def idn(self):
@@ -75,6 +76,7 @@ class CLD1010:
             # laser is on, so turn it off first
             self.off()
 
+        _logger.info(f'Setting CLD1010 [{self}] max current to [{value}] A.')
         self.laser.write(f'SOUR:CURR:LIM:AMPL {value:.5f}')
 
         # turn the laser back on if it was on before
@@ -91,6 +93,7 @@ class CLD1010:
         """Set the laser diode current setpoint. This is the setpoint when the laser is disabled in modulation mode."""
         max_current = self.get_max_current()
         if value <= max_current:
+            _logger.info(f'Setting CLD1010 [{self}] set current to [{value}] A.')
             self.laser.write(f'SOUR:CURR {value:.5f}')
         else:
             raise ValueError(f'Current setpoint: [{value}] is larger than max current [{max_current}]).')
@@ -106,6 +109,7 @@ class CLD1010:
 
     def on(self):
         if self.get_tec_state():
+            _logger.info(f'Turning CLD1010 [{self}] lasing on.')
             self.set_ld_state(1)
         else:
             return('Error: temperature controller disabled.')
@@ -129,4 +133,5 @@ class CLD1010:
         self.laser.write(f'SOUR:AM:STAT {val}')
 
     def off(self):
+        _logger.info(f'Turning CLD1010 [{self}] lasing off.')
         self.set_ld_state(0)
