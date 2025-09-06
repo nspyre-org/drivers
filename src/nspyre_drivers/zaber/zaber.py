@@ -20,7 +20,7 @@ class ZaberStages:
         """
         Args:
             serial_port: serial COM port (see pyserial docs). Leave as None to detect automatically (linux only).
-            axis_mapping: dictionary mapping an axis peripheral id (int) to the axis name (str)
+            axis_mapping: dictionary mapping a tuple (serial number, axis number) to a user-defined axis name.
         """
         self.axis_mapping = axis_mapping
         self.serial_port = serial_port
@@ -64,13 +64,14 @@ class ZaberStages:
 
         self.axes = OrderedDict()
         for device in self.devices:
+            logger.debug(f'Found Zaber device with serial number [{device.serial_number}]')
             for i in range(1, device.axis_count + 1):
                 axis = device.get_axis(i)
-                logger.debug(f'Found Zaber axis [{axis}] with peripheral id [{axis.peripheral_id}]')
-                if axis.peripheral_id in self.axis_mapping:
-                    axis_key = self.axis_mapping[axis.peripheral_id]
-                    logger.debug(f'Associated zaber axis [{axis_key}] with peripheral id [{axis.peripheral_id}]')
-                    self.axes[axis_key] = axis
+                logger.debug(f'Found axis [{axis}]')
+                if (device.serial_number, i) in self.axis_mapping:
+                    axis_name = self.axis_mapping[(device.serial_number, i)]
+                    logger.debug(f'Associated device serial number [{device.serial_number}] zaber axis [{i}] with name [{axis_name}]')
+                    self.axes[axis_name] = axis
 
     def close(self):
         self.conn.close()
